@@ -1,0 +1,217 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>校园新闻</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://www.ziqiangxuetang.com/media/django/csrf.js"></script>
+    <script src="{% static 'js/register.js' %}"></script>
+</head>
+<style>
+    .form-group label{
+        font-weight:normal;
+        font-size:18px;
+        color: #444;
+    }
+</style>
+<script>
+    $(function(){
+
+        {% if fail == 1 %}
+            $("#register").modal('show');
+        {% endif %}
+    });
+</script>
+<body style="background-color: #eeeeee;">
+<div style="height: 70px;background-color: #7ebfff">
+
+</div>
+<div class="row clearfix">
+    <div class="col-xs-12 col-lg-12">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+
+                <nav class="navbar navbar-inverse" role="navigation">
+                    <!--导航栏首页-->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">首页</a>
+                    </div>
+                    <!--栏目-->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="font-size: 16px;">
+                        <!--搜素栏目-->
+                        {% block nav %}
+                        {% endblock nav %}
+                        {% if user.is_authenticated %}
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><span class="badge" style="color: red;">50</span></li>
+                            <li>
+                                <img src="{% static 'img/touxiang2.jpg' %}" class="img-responsive img-circle" alt="touxiang" style="width: 50px;height: 50px;">
+                            </li>
+                        </ul>
+                        {% else %}
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#"><span class="glyphicon glyphicon-user" data-toggle="modal" data-target="#login">注册</span> </a></li>
+                            <li><a href="#"><span class="glyphicon glyphicon-log-in" data-toggle="modal" data-target="#register">登录</span> </a></li>
+                        </ul>
+                        {% endif %}
+                        <ul class="nav navbar-nav navbar-right">
+                            <form class="navbar-form navbar-left" role="search">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" />
+                                </div> <button type="submit" class="btn btn-default">搜索</button>
+                            </form>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+<!--登入弹出框-->
+<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true";>
+    <div class="modal-dialog model-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title text-center" id="loginLabel">
+                    登入
+                </h4>
+            </div>
+            <div class="modal-body">
+                <!--登入表单-->
+                <form class="form-horizontal" role="form" method="post" action="{% url 'users:login' %}">
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-3 control-label">用户名</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="firstname" placeholder="请输入邮箱" name="email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-3 control-label">密码</label>
+                        <div class="col-sm-6">
+                            <input type="password" class="form-control" id="lastname" placeholder="请输入您的密码" name="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-3 control-label">验证码</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="verify" placeholder="验证码" name="verify">
+                        </div>
+                        <div class="col-sm-2 control-label">
+                            <img src="img/verify.jpg" class="img-responsive" alt="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox">请记住我
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-8 col-sm-10">
+                            <button type="submit" class="btn btn-primary">登录</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal">关闭-->
+                <!--</button>-->
+                <!--<button type="button" class="btn btn-primary">-->
+                    <!--提交更改-->
+                <!--</button>-->
+            <!--</div>-->
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!--注册弹出框-->
+<div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true";>
+    <div class="modal-dialog model-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title text-center" id="registerLabel">
+                    注册
+                </h4>
+            </div>
+            <div class="modal-body">
+                <!--注册表单-->
+                <form class="form-horizontal" id="register_form" role="form"  method="post" action="{% url 'users:register' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="registername" class="col-sm-3 control-label">用户名</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="registername" placeholder="请输入用户名" name="username" value="">
+                        </div>
+                        <div class="popover-options">
+                            <a href="#" title="提示格式："  data-container="body" data-toggle="popover" data-placement="left"
+                                style="font-size: 14px;" data-content="
+                                    1.用户名：150个字符或者更少。包含字母，数字和仅有的@/./+/-/_符号。</br>
+                                    2.你的密码不能与其他个人信息太相似</br>
+                                    3.你的密码必须包含至少 8 个字符</br>
+                                    4.你的密码不能是大家都爱用的常见密码</br>
+                                    5.你的密码不能全部为数字
+                            ">提示</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-3 control-label">邮箱</label>
+                        <div class="col-sm-6">
+                            <input type="email" class="form-control" id="registeremail" placeholder="请输入您的邮箱" name="email" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerpwd1" class="col-sm-3 control-label">密码</label>
+                        <div class="col-sm-6">
+                            <input type="password" class="form-control" id="registerpwd1" placeholder="请输入您的密码" name="password1" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerpwd2" class="col-sm-3 control-label">确认密码</label>
+                        <div class="col-sm-6">
+                            <input type="password" class="form-control" id="registerpwd2" placeholder="请确认您的密码" name="password2" value="">
+                        </div>
+                    </div>
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <span id="error" style="display: none;color: red;font-size: 16px;">错误提示:</span>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-7">
+                            <span style="color: red;font-size: 16px;">
+                                {% for field in form %}
+                                    {{ field.errors }}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="submit" class="btn btn-primary" id="register_sub" title="警告！"
+                                    data-container="body" data-toggle="popover" data-placement="left" data-content="你的输入不合法！无法提交！">注册</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% block main %}
+{% endblock main %}
+
+<div class="jumbotron" style="margin:0px 0px 5px 0px;">
+
+</div>
+</body>
+</html>

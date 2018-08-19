@@ -1,16 +1,21 @@
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.http import JsonResponse
 from django.views import View
+from django.views.generic import DetailView
 from .forms import RegisterForm
-from .models import User
+from .models import User, News, Tag
 from django.contrib.auth import authenticate, login
+from markdown.extensions.toc import TocExtension
+from django.utils.text import slugify
+import markdown
 
 
 class NewsView(View):
     def get(self, request):
         form = RegisterForm()  # 渲染注册空表单
         redirect_to = request.POST.get('next', request.GET.get('next', ''))
-        return render(request, 'users/news.html', {'form': form, 'next': redirect_to, 'fail': 0})
+        news = News.objects.all()
+        return render(request, 'users/news.html', {'form': form, 'news': news, 'next': redirect_to, 'fail': 0})
 
     # def post(self, request):
     #     form = RegisterForm(request.POST)
@@ -20,6 +25,38 @@ class NewsView(View):
     #     else:
     #         form = RegisterForm()  # 渲染注册空表单
     #     return render(request, 'users/news.html', {'form': form})
+
+
+class NewsDetail(DetailView):
+    model = News
+    template_name = 'users/news_detail.html'
+    content_object_name = 'news'
+
+    def get(self, request, *args, **kwargs):
+        response = super(NewsDetail, self).get(request, *args, **kwargs)
+        self.object.increase_views()
+        return response
+
+    def get_object(self, queryset=None):
+        news = super(NewsDetail, self).get_object(queryset=None)
+        md = markdown.Markdown(extensions=[
+            'markdown.extensions.extra',
+            'markdown.extensions.codehilite',
+            'markdown.extensions.toc',
+            TocExtension(slugify=slugify),
+        ])
+        news.news_content = md.convert(news.news_content)
+        news.toc = md.toc
+        return news
+
+    def get_context_data(self, **kwargs):
+        context = super(NewsDetail, self).get_context_data(**kwargs)
+        news = super(NewsDetail, self).get_object(queryset=None)
+        tags_list = news.tags.all()
+        context.update({
+            'tags_list': tags_list
+        })
+        return context
 
 
 def Register(request):
