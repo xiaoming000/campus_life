@@ -1,1 +1,0 @@
-# campus_life
