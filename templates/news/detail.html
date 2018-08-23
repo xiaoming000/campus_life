@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load news_tags %}
+{% block main %}
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-lg-9">
+            <h2 style="text-align: center;">{{news.title}}</h2>
+            <p>{{news.content | safe}}</p>
+
+            <div>
+                <div>
+                    <form method="post" action="{% url 'news:news_comment' news.pk %}">
+                        {% csrf_token %}
+                        <!--<input type="hidden"  >-->
+                        <textarea name='content'></textarea>
+                        <span style="color: red;">{{ form.content.errors }}</span>
+                        <input type="submit" value="提交">
+                    </form>
+                </div>
+                <div>
+                    <ul class="comment-list list-unstyled">
+                      {% for comment in comment_list %}
+                      <li class="comment-item"  style="padding: 5px 0px;">
+                        <span class="nickname">{{ comment.user.username }}</span>
+                        <time class="submit-date">{{ comment.created_time }}</time>
+                        <div class="text">
+                          {{ comment.content|safe }}
+                        </div>
+                      </li>
+                      {% empty %}
+                      暂无评论
+                      {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-3" style="">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <h4>文章目录</h4>
+                    {{ news.toc|safe }}
+                </li>
+                <li class="list-group-item">
+                    <h4>最新新闻</h4>
+                    {% get_recent_news as recent_news_list %}
+                    <ul>
+                        {% for news in recent_news_list %}
+                        <li>
+                          <a href="{{ news.get_absolute_url }}">{{ news.title }}</a>
+                        </li>
+                        {% empty %}
+                        暂无文章！
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <h4>文章标签</h4>
+                    {% for tag in tags_list %}
+                    <button type="button" class="btn btn-default">{{tag.name}}</button>
+                    {% endfor %}
+                </li>
+            </ul>
+        </div>
+   </div>
+
+</div>
+
+{% endblock main %}
+
+

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load post_tags %}
+{% block main %}
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-lg-9">
+            <h2 style="text-align: center;">{{post.title}}</h2>
+            <p>{{post.content | safe}}</p>
+
+            <div>
+                <div>
+                    <form method="post" action="{% url 'post:post_comment' post.pk %}">
+                        {% csrf_token %}
+                        <!--<input type="hidden"  >-->
+                        <textarea name='content'></textarea>
+                        {{ form.content.errors }}
+                        <input type="submit" value="提交">
+                    </form>
+                </div>
+                <div>
+                    <ul class="comment-list list-unstyled">
+                      {% for comment in comment_list %}
+                      <li class="comment-item"  style="padding: 5px 0px;">
+                        <span class="nickname">{{ comment.user.username }}</span>
+                        <time class="submit-date">{{ comment.created_time }}</time>
+                        <div class="text">
+                          {{ comment.content|safe }}
+                        </div>
+                      </li>
+                      {% empty %}
+                      暂无评论
+                      {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-3" style="">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <h4>文章目录</h4>
+                    {{ post.toc|safe }}
+                </li>
+                <li class="list-group-item">
+                    <h4>TA的最新文章</h4>
+                    {% get_recent_post post.auther as recent_post_list %}
+                    <ul>
+                        {% for post in recent_post_list %}
+                        <li>
+                          <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                        </li>
+                        {% empty %}
+                        暂无文章！
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <h4>文章标签</h4>
+                    {% for tag in tags_list %}
+                    <button type="button" class="btn btn-default">{{tag.name}}</button>
+                    {% endfor %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock main %}
+
+

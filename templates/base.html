@@ -3,12 +3,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>校园新闻</title>
+    <title>{{ htitle }}</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="http://www.ziqiangxuetang.com/media/django/csrf.js"></script>
     <script src="{% static 'js/register.js' %}"></script>
+    <script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
 </head>
 <style>
     .form-group label{
@@ -18,6 +19,11 @@
     }
 </style>
 <script>
+    tinyMCE.init({
+            'mode':'textareas',
+            'theme':'modern',
+        });
+
     $(function(){
 
         {% if fail == 1 %}
@@ -46,14 +52,49 @@
                     <!--栏目-->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="font-size: 16px;">
                         <!--搜素栏目-->
-                        {% block nav %}
-                        {% endblock nav %}
+                        <ul class="nav navbar-nav">
+                            {% if nav == 2 %}
+                            <li class="active"> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
+                            <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
+                            <li> <a href="{% url 'post:study' %}">学习交流</a></li>
+                            <li> <a href="#">毕业校友</a></li>
+                            {% elif nav == 3 %}
+                            <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
+                            <li class="active"> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
+                            <li> <a href="{% url 'post:study' %}">学习交流</a></li>
+                            <li> <a href="#">毕业校友</a></li>
+                            {% elif nav == 4 %}
+                            <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
+                            <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
+                            <li class="active"> <a href="{% url 'post:study' %}">学习交流</a></li>
+                            <li> <a href="#">毕业校友</a></li>
+                            {% elif nav == 5 %}
+                            <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
+                            <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
+                            <li> <a href="{% url 'post:study' %}">学习交流</a></li>
+                            <li class="active"> <a href="#">毕业校友</a></li>
+                            {% else %}
+                            <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
+                            <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
+                            <li> <a href="{% url 'post:study' %}">学习交流</a></li>
+                            <li> <a href="#">毕业校友</a></li>
+                            {% endif %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">信息查询<strong class="caret"></strong></a>
+                                <ul class="dropdown-menu" style="min-width: 104px;">
+                                    <li><a href="#">成绩查询</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">课表查询</a></li>
+                                </ul>
+                            </li>
+                        </ul>
                         {% if user.is_authenticated %}
                         <ul class="nav navbar-nav navbar-right">
                             <li><span class="badge" style="color: red;">50</span></li>
                             <li>
                                 <img src="{% static 'img/touxiang2.jpg' %}" class="img-responsive img-circle" alt="touxiang" style="width: 50px;height: 50px;">
                             </li>
+                            <!--<li><span style="color:white;">欢迎您：{{user.id}}</span></li>-->
                         </ul>
                         {% else %}
                         <ul class="nav navbar-nav navbar-right">

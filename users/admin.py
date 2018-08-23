@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import User, Tag, News
+from .models import User, Tag, Category
 
 admin.site.register(User)
 admin.site.register(Tag)
-admin.site.register(News)
+admin.site.register(Category)
