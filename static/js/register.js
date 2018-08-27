@@ -121,6 +121,37 @@ $(function () {
     function() {
         $(".popover-options a").popover('hide');
     })
+
+    // 添加标签
+    $(".tag_add").click(function(){
+        $(this).before('<div class="tag pull-left" style="padding-left: 5px;"><input  autofocus type="text" size="1"></div>');
+        var ipt = $(this).prev().children("input");
+        // alert(ipt);
+        ipt.bind('input propertychange',function(){
+            var obj = $(this);
+            var text_length = obj.val().length;  //获取当前长度
+            var width = parseInt(text_length)*16; //该12是改变前的宽度除以当前字符串的长度，算出每个字符的长度
+            if(width>10){
+                obj.css({
+                    'width': width+'px'
+                });
+            }
+        });
+        ipt.blur(function () {
+            ipt.before('<span>'+ ipt.val() +'</span>');
+            ipt.remove();
+            var len = $(".tag").length;
+            var str = "";
+            for(i=0; i<len; i++){
+                if(i == len-1){
+                    str += $(".tag").eq(i).children("span").text();
+                }else {
+                    str += $(".tag").eq(i).children("span").text() + ",";
+                }
+            }
+            $("#tags_input").val(str);
+        });
+    });
 });
 // $(function () {
 // 	$("[data-toggle='popover']").popover();

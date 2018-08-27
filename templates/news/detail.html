@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load news_tags %}
+{% block head %}
+<script>
+    tinyMCE.init({
+            'mode':'textareas',
+            'theme':'modern',
+        });
+</script>
+{% endblock head %}
 {% block main %}
 <div class="container">
     <div class="row clearfix">

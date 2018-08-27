@@ -15,6 +15,7 @@ class News(models.Model):
     views = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag, blank=True)
     auther = models.ForeignKey(User, on_delete=models.CASCADE)
+    talk = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

@@ -1,8 +1,15 @@
-from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.shortcuts import render, redirect, reverse, HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from .forms import RegisterForm
 from .models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+
+
+def Index(request):
+    context= {
+        'htitle': '校园生活-首页'
+    }
+    return render(request, 'users/index.html', context)
 
 
 def Register(request):
@@ -41,14 +48,15 @@ def Register(request):
 def Login(request):
     redirect_to = request.POST.get('next', request.GET.get('next', ''))
     if request.method == 'POST':
-        username = request.POST.get('username', '')
+        username = request.POST.get('username', 'fsf')
         password = request.POST.get('password', '')
         user = authenticate(request, username=username, password=password)
+        # return HttpResponse(username)
         if user is not None:
             login(request, user)
-            return redirect(reverse('users:news'))
+            return redirect(reverse('users:index'))
         else:
-            return render(request, 'users/news.html', {
+            return render(request, 'users/index.html', {
                 'username': username,
                 'password': password,
             })
@@ -63,5 +71,9 @@ def UserAjax(request):
         return JsonResponse({'repeat': 0})
     # return HttpResponse(user)
 
+
+def loginout(request):
+    logout(request)
+    return redirect('/')
 
 

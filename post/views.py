@@ -1,12 +1,13 @@
 import markdown
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.views import View
 from django.views.generic import DetailView
 from markdown.extensions.toc import TocExtension
 from django.utils.text import slugify
 from users.forms import RegisterForm
-from .forms import PostCommentForm
+from .forms import PostCommentForm, PostForm
 from .models import Post, PostComent
+from users.models import Category, Tag
 
 
 class PostView(View):
@@ -105,6 +106,50 @@ def post_comment(request, post_pk):
         return render(request, 'post/detail.html', context=context)
 
     return redirect(post)
+
+
+def push_wall(request):
+    redirect_to = request.POST.get('next', request.GET.get('next', ''))
+    category_id = request.POST.get('category', request.GET.get('category', ''))
+    if not category_id:
+        category_id = 1
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        category = Category.objects.filter(pk=category_id)
+        tags_str = request.POST['tags_str']
+        tags_list = tags_str.split(',')
+        tags_push = []
+        for tag in tags_list:
+            tags_data = Tag.objects.filter(name=tag)
+            if tags_data:
+                tags = Tag(name=tag)
+                tags.save()
+                tags_push.append(tags)
+            else:
+                tags = Tag()
+                tags.name = tag
+                tags.save()
+                tags_push.append(tags)
+        # return HttpResponse(request.POST['next'])
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.category = category[0]
+            post.auther = request.user
+            post.save()
+            post.tags.set(tags_push)
+            if redirect_to:
+                return redirect(redirect_to)
+            else:
+                return redirect('/')
+    else:
+        # return HttpResponse(redirect_to)
+        form = PostForm()
+        context = {
+            'form': form,
+            'next': redirect_to,
+            'category': category_id
+        }
+    return render(request, 'post/push_wall.html', context=context)
 
 
 

@@ -1,0 +1,20 @@
+.form-group label {
+    font-weight:normal;
+    font-size:18px;
+    color: #444;
+}
+#head {
+    height: 70px;
+    background: #ccc url("../img/zhumeng.png") no-repeat center;
+}
+#touxiang {
+    margin: 0px;
+    float: right;
+    padding: 0px 20px 0px 0px;
+}
+
+.tag_add{
+    padding-left: 5px;
+    color: cornflowerblue;
+    cursor: pointer;
+}
