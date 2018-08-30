@@ -25,7 +25,7 @@ SECRET_KEY = '4^vp%_bn^zn0pjze+g9iqan*^&)pwh=$g+66!njrct3gbh(qq1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -131,9 +131,11 @@ AUTH_USER_MODEL = 'users.User'
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # 富文本编辑器设置
 TINYMCE_DEFAULT_CONFIG = {
