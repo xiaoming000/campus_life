@@ -5,8 +5,8 @@ from django.views.generic import DetailView
 from markdown.extensions.toc import TocExtension
 from django.utils.text import slugify
 from users.forms import RegisterForm
-from .forms import PostCommentForm, PostForm
-from .models import Post, PostComent
+from .forms import PostCommentForm, PostForm, PostReplyForm
+from .models import Post, PostComent, PostReply
 from users.models import Category, Tag
 
 
@@ -67,7 +67,12 @@ class PostDetailView(DetailView):
         post = super(PostDetailView, self).get_object(queryset=None)
         tags_list = post.tags.all()
         form = PostCommentForm()
+        reply_form = PostReplyForm()
         comment_list = post.postcoment_set.all()
+        reply_list = []
+        # for comment in comment_list:
+        #     reply_list.append(comment.postreply_set.all())
+        # reply_list = comment_list.postreply_set.all()
         if post.category.pk == 1:
             title = '万能墙'
             nav = 3
@@ -78,12 +83,15 @@ class PostDetailView(DetailView):
             'tags_list': tags_list,
             'nav': nav,
             'form': form,
+            'reply_form': reply_form,
             'comment_list': comment_list,
+            'reply_list': reply_list,
             'htitle': title +'-' + post.title
         })
         return context
 
 
+# 可能要重构
 def post_comment(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
     user = request.user
@@ -97,6 +105,14 @@ def post_comment(request, post_pk):
 
             return redirect(post)
         else:
+            md = markdown.Markdown(extensions=[
+                'markdown.extensions.extra',
+                'markdown.extensions.codehilite',
+                'markdown.extensions.toc',
+                TocExtension(slugify=slugify),
+            ])
+            post.content = md.convert(post.content)
+            post.toc = md.toc
             comment_list = post.postcoment_set.all()
             context = {
                 'post': post,
@@ -105,6 +121,33 @@ def post_comment(request, post_pk):
             }
         return render(request, 'post/detail.html', context=context)
 
+    return redirect(post)
+
+
+def post_reply(request, post_pk):
+    post = get_object_or_404(Post, pk=post_pk)
+    # post_comment = get_object_or_404(PostComent, pk= post_comment_pk)
+    user = request.user
+    if request.method == "POST":
+        reply_form = PostReplyForm(request.POST)
+        if request.POST['reply']:
+            reply = request.POST['reply']
+        if reply_form.is_valid():
+            reply_form = reply_form.save(commit=False)
+            if request.POST['reply']:
+                reply_form.reply = PostReply.objects.filter(pk=request.POST['reply'])[0]
+            reply_form.user = user
+            reply_form.save()
+
+            return redirect(post)
+        else:
+            comment_list = post.postcoment_set.all()
+            context = {
+                'post': post,
+                'reply_form': reply_form,
+                'comment_list': comment_list
+            }
+        return render(request, 'post/detail.html', context=context)
     return redirect(post)
 
 

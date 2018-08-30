@@ -21,5 +21,6 @@ urlpatterns = [
     path(r'', include('users.urls')),
     path(r'news/', include('news.urls')),
     path(r'post/', include('post.urls')),
-    path(r'^tinymce/', include('tinymce.urls')),
+    path(r'graduate/', include('graduate.urls')),
+    path(r'tinymce/', include('tinymce.urls')),
 ]

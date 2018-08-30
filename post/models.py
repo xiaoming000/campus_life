@@ -58,5 +58,20 @@ class PostComent(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.content[0:20]
+
+
+class PostReply(models.Model):
+    content = models.TextField()
+    created_time = models.DateTimeField(auto_now_add=True)
+    delete = models.SmallIntegerField(default=0)
+    reply_type = models.SmallIntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post_comment = models.ForeignKey(PostComent, on_delete=models.CASCADE)
+    reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.content[0:20]
 
 

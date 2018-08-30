@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'users',
     'news',
     'post',
+    'graduate',
     'tinymce',  # 富文本编辑器
 ]
 

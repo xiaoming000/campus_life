@@ -12,9 +12,18 @@
     float: right;
     padding: 0px 20px 0px 0px;
 }
-
+/*文章发布*/
 .tag_add{
     padding-left: 5px;
     color: cornflowerblue;
     cursor: pointer;
+}
+
+/*毕业生*/
+.g_label {
+    color: #777;
+    padding-bottom: 3px;
+}
+.g_info {
+    /*color: #7ebfff;*/
 }

@@ -27,6 +27,9 @@
                 alert("你还未登入，不能发表文章！")
             });
 
+            $('#verifycode').css('cursor','pointer').click(function() {
+                $(this).attr('src',$(this).attr('src')+1)
+            });
         });
     </script>
     {% block head %}{% endblock head %}
@@ -46,7 +49,7 @@
             <!--<li><span style="color:white;">欢迎您：{{user.id}}</span></li>-->
         </ul>
             {% else %}
-        <ul class="nav navbar-nav">
+        <ul class="list-inline" style="padding: 20px 0px;">
             <li><a href="#"><span class="glyphicon glyphicon-user" data-toggle="modal" data-target="#register">注册</span> </a></li>
             <li><a href="#"><span class="glyphicon glyphicon-log-in" data-toggle="modal" data-target="#login">登录</span> </a></li>
         </ul>
@@ -72,27 +75,27 @@
                 <li class="active"> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
                 <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
                 <li> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li> <a href="#">毕业校友</a></li>
+                <li> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% elif nav == 3 %}
                 <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
                 <li class="active"> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
                 <li> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li> <a href="#">毕业校友</a></li>
+                <li> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% elif nav == 4 %}
                 <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
                 <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
                 <li class="active"> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li> <a href="#">毕业校友</a></li>
+                <li> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% elif nav == 5 %}
                 <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
                 <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
                 <li> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li class="active"> <a href="#">毕业校友</a></li>
+                <li class="active"> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% else %}
                 <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
                 <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
                 <li> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li> <a href="#">毕业校友</a></li>
+                <li> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% endif %}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">信息查询<strong class="caret"></strong></a>
@@ -176,36 +179,19 @@
                     </div>
                     <div class="form-group">
                         <label for="lastname" class="col-sm-3 control-label">验证码</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="verify" placeholder="验证码" name="verify">
+                        <div>
+                            <input id="valid-inp" name="valifycode" class="form-control" type="text" placeholder="请输入验证码" autocomplete="off">
                         </div>
-                        <div class="col-sm-2 control-label">
-                            <img src="img/verify.jpg" class="img-responsive" alt="">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox">请记住我
-                                </label>
-                            </div>
+                        <div style="border: 1px solid red;padding: 0px;">
+                            <img id='verifycode' src="/verifycode/?1" alt="CheckCode" style="border: 1px solid red;padding: 0px;margin: 0px;" />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-offset-8 col-sm-10">
-                            <button type="submit" class="btn btn-primary">登录</button>
-                        </div>
+                    <div>
+                            <button type="submit" class="btn-lg btn-primary col-lg-offset-5" style="padding: 10px 30px;">登录</button>
+                            <a class="col-lg-offset-3" href="#">忘记密码</a>
                     </div>
                 </form>
             </div>
-            <!--<div class="modal-footer">-->
-                <!--<button type="button" class="btn btn-default" data-dismiss="modal">关闭-->
-                <!--</button>-->
-                <!--<button type="button" class="btn btn-primary">-->
-                    <!--提交更改-->
-                <!--</button>-->
-            <!--</div>-->
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
