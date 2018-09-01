@@ -125,3 +125,8 @@ def UserAjax(request):
 def loginout(request):
     logout(request)
     return redirect('/')
+
+
+class InfoView(View):
+    def get(self, request):
+        return render(request, 'users/info.html')

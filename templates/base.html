@@ -3,13 +3,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ htitle }}</title>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    <title>{{ htitle }}</title>
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="http://www.ziqiangxuetang.com/media/django/csrf.js"></script>
-    <script src="{% static 'js/jquery.auto-grow-input.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <!--<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>-->
+    <!--<script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>-->
+    <!--<script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>-->
     <script src="{% static 'js/register.js' %}"></script>
     <script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
     <script>
@@ -58,95 +60,77 @@
 </div>
 <!--导航栏-->
 <div class="clearfix">
-    <nav class="navbar navbar-inverse" role="navigation">
+    <nav class="navbar navbar-expand-xl bg-dark navbar-dark" role="navigation">
         <!--导航栏首页-->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{% url 'users:index' %}">首页</a>
-        </div>
+        <a class="navbar-brand" href="{% url 'users:index' %}">首页</a>
         <!--栏目-->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="font-size: 16px;">
+        <div class="collapse navbar-collapse" id="collapsibleNavbar" style="font-size: 16px;">
             <!--搜素栏目-->
             <ul class="nav navbar-nav">
                 {% if nav == 2 %}
-                <li class="active"> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
+                <li class="nav-item active"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
+                <li class="nav-item"> <a class="nav-link" class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% elif nav == 3 %}
-                <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li class="active"> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
+                <li class="nav-item active"> <a class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% elif nav == 4 %}
-                <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li class="active"> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
+                <li class="nav-item active"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% elif nav == 5 %}
-                <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li class="active"> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
+                <li class="nav-item active"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% else %}
-                <li> <a href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li> <a href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li> <a href="{% url 'post:study' %}">学习交流</a></li>
-                <li> <a href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
                 {% endif %}
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">信息查询<strong class="caret"></strong></a>
-                    <ul class="dropdown-menu" style="min-width: 104px;">
-                        <li><a href="#">成绩查询</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">课表查询</a></li>
-                    </ul>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">信息查询<strong class="caret"></strong></a>
+                    <div class="dropdown-menu" style="min-width: 104px;">
+                        <a class="dropdown-item" href="#">成绩查询</a>
+                        <a class="dropdown-item" href="#">成绩查询</a>
+                    </div>
                 </li>
             </ul>
-            <div>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <form class="navbar-form navbar-left" role="search">
-                            <div class="form-group">
-                                <input type="text" class="form-control" />
-                            </div> <button type="submit" class="btn btn-default">搜索</button>
-                        </form>
-                    </li>
-                    <li class="dropdown" style="text-align: center;">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            个人中心
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu" style="min-width: 100px;text-align: center;">
-                            <li><a href="#">我的消息</a></li>
-                            <li><a href="#">我的信息</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{% url 'users:loginout' %}">注销登录</a></li>
-                        </ul>
-                    <li class="dropdown" style="text-align: center;">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            发表
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu" style="min-width: 100px;text-align: center;">
-                            {% if user.is_authenticated %}
-                            <li><a href="{% url 'post:push_wall' %}?next={{ request.path }}&category=1">发墙</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{% url 'post:push_wall' %}?next={{ request.path }}&category=2">发学习</a></li>
-                            {% else %}
-                            <li class="push"><a href="#">发墙</a></li>
-                            <li class="divider"></li>
-                            <li class="push"><a href="#">发学习</a></li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                    </li>
-                </ul>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="nav-item navbar-right">
+                <form class="form-inline" role="search">
+                    <input type="text" class="form-control" />
+                    <button class="btn btn-success" type="button">搜索</button>
+                </form>
+            </li>
+        </ul>
+        <div class="nav dropdown">
+            <a href="#" class="nav-link dropdown-toggle" id="navbardrop" data-toggle="dropdown" style="color: #ccc;">个人中心</a>
+            <div class="dropdown-menu" style="min-width: 104px;" >
+                <a class="dropdown-item" href="#">我的消息</a>
+                <a class="dropdown-item" href="#">我的信息</a>
+
+                {% if user.is_authenticated %}
+                <a class="dropdown-item" href="{% url 'post:push_wall' %}?next={{ request.path }}&category=1">发墙</a>
+                <a class="dropdown-item" href="{% url 'post:push_wall' %}?next={{ request.path }}&category=2">发学习</a>
+                {% else %}
+                <a class="dropdown-item" href="#">发墙</a>
+                <a class="dropdown-item" href="#">发学习</a>
+                {% endif %}
+
+                <a class="dropdown-item" href="{% url 'users:info' %}">个人中心</a>
+                <a class="dropdown-item" href="{% url 'users:loginout' %}">注销登录</a>
             </div>
         </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
     </nav>
 </div>
 <!--登入弹出框-->

@@ -80,19 +80,6 @@ $(function () {
            }
         }
     });
-    //注册提交
-//     flag = 0;
-//     if(flag_username == 0){
-//         $(this).attr('data-content', "你的用户名不合法，请检查后提交！");
-//         $("[data-toggle='popover']").popover({trigger: 'hover'});
-//     }else if(flag_email == 0){
-//         $(this).attr('data-content', "你的邮箱！不合法，请检查后提交！");
-//         $("[data-toggle='popover']").popover({trigger: 'hover'});
-//     }else if(flag_password1 == 0){
-//         $(this).attr('data-content', "你的密码不合法，请检查后提交！");
-//         $("[data-toggle='popover']").popover({trigger: 'hover'});
-//     }
-// else
     $("#register_sub").click(function(e){
         e.preventDefault();
         if(flag_username == 0){
@@ -153,6 +140,3 @@ $(function () {
         });
     });
 });
-// $(function () {
-// 	$("[data-toggle='popover']").popover();
-// });
