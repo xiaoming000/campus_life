@@ -8,6 +8,7 @@ from users.forms import RegisterForm
 from .forms import PostCommentForm, PostForm, PostReplyForm
 from .models import Post, PostComent, PostReply
 from users.models import Category, Tag
+from datetime import datetime
 
 
 class PostView(View):
@@ -15,13 +16,15 @@ class PostView(View):
         form = RegisterForm()  # 渲染注册空表单
         redirect_to = request.POST.get('next', request.GET.get('next', ''))
         post_list = Post.objects.filter(category=1)
+        now_time = datetime.now()
         return render(request, 'post/post.html', {
             'form': form,
             'post_list': post_list,
             'next': redirect_to,
             'fail': 0,
             'nav': 3,
-            'htitle': '万能墙'
+            'htitle': '万能墙',
+            'now_time': now_time
         })
 
 
@@ -30,13 +33,15 @@ class StudyView(View):
         form = RegisterForm()  # 渲染注册空表单
         redirect_to = request.POST.get('next', request.GET.get('next', ''))
         study_list = Post.objects.filter(category=2)
+        now_time = datetime.now()
         return render(request, 'post/study.html', {
             'form': form,
             'study_list': study_list,
             'next': redirect_to,
             'fail': 0,
             'nav': 4,
-            'htitle': '学习交流'
+            'htitle': '学习交流',
+            'now_time': now_time
         })
 
 
@@ -86,7 +91,7 @@ class PostDetailView(DetailView):
             'reply_form': reply_form,
             'comment_list': comment_list,
             'reply_list': reply_list,
-            'htitle': title +'-' + post.title
+            'htitle': title + '-' + post.title,
         })
         return context
 
@@ -165,8 +170,7 @@ def push_wall(request):
         for tag in tags_list:
             tags_data = Tag.objects.filter(name=tag)
             if tags_data:
-                tags = Tag(name=tag)
-                tags.save()
+                tags = tags_data[0]
                 tags_push.append(tags)
             else:
                 tags = Tag()

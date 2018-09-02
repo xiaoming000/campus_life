@@ -1,26 +1,56 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% block head %}
+<script>
+    $(function(){
+        var push_info = $(".push_info");
+        for (var i=0; i < push_info.length; i++) {
+            // alert(push_info.eq(i).children(".created_time_day").val());
+            if ( push_info.eq(i).children(".created_time_day").val() == push_info.eq(i).children(".now_time_day").val()
+            && push_info.eq(i).children(".created_time_month").val() == push_info.eq(i).children(".now_time_month").val()
+            && push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val() ) {
+                push_info.eq(i).children(".time").text("今天").css("paddingLeft", '12px');
+            } else if ( push_info.eq(i).children(".created_time_day").val() ==push_info.eq(i).children(".now_time_day").val()-1
+            && push_info.eq(i).children(".created_time_month").val() == push_info.eq(i).children(".now_time_month").val()
+            && push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val() ) {
+                push_info.eq(i).children(".time").text("昨天").css("paddingLeft", '12px');;
+            } else if ( push_info.eq(i).children(".created_time_day").val() == push_info.eq(i).children(".now_time_day").val()-2
+            && push_info.eq(i).children(".created_time_month").val() == push_info.eq(i).children(".now_time_month").val()
+            && push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val() ) {
+                push_info.eq(i).children(".time").text("前天").css("paddingLeft", '12px');;
+            } else if ( push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val()) {
+                push_info.eq(i).children(".time").text(push_info.eq(i).children(".created_time_month").val() + "月" +
+                push_info.eq(i).children(".created_time_day").val() + "日");
+            } else {
+                push_info.eq(i).children(".time").text(push_info.eq(i).children(".created_time_year").val() + "年" +
+                push_info.eq(i).children(".created_time_month").val() + "月" +
+                push_info.eq(i).children(".created_time_day").val() + "日");
+            }
+        }
+    });
+</script>
+{% endblock head %}
 {% block main %}
 <div class="container">
     {% for study in study_list %}
-    <div class="row clearfix">
+    <div class="row" style="margin: 10px 0px;">
         <!--发文人头像和时间信息-->
-        <div class="col-xl-2 col-sm-0" style="border: 1px solid red;">
-            <img src="{% static 'img/touxiang1.jpg' %}" class="rounded-circle img-fluid" alt="Cinque Terre">
-            <span>{{ study.created_time }}</span>
+        <div class="col-lg-offset-1 col-xl-1 col-sm-12 push_info">
+            <img src="{% static 'img/touxiang1.jpg' %}" class="img-fluid rounded-circle" alt="Cinque Terre" style="width: 60px; height: 60px;">
+            <span class="time""></span>
+            <span style="padding-left: 10px;">{{ study.created_time|date:"H:i" }} </span>
+            <input class="created_time_day" type="hidden" value="{{ study.created_time.day }}">
+            <input class="created_time_month" type="hidden" value="{{ study.created_time.month }}">
+            <input class="created_time_year" type="hidden" value="{{ study.created_time.year }}">
+            <input class="now_time_day" type="hidden" value="{{ now_time.day }}">
+            <input class="now_time_month" type="hidden" value="{{ now_time.month }}">
+            <input class="now_time_year" type="hidden" value="{{ now_time.year }}">
         </div>
         <!--文章内容主体-->
-        <div class="col-xl-10 col-sm-12" style="border: 1px solid red;">
-            <div class="panel panel-info">
-                <!--&lt;!&ndash;文章title部分&ndash;&gt;-->
-                <!--<div class="panel-heading">-->
-                    <!--<h3 class="panel-title text-center">-->
-                        <!--带有 title 的面板标题-->
-                    <!--</h3>-->
-                <!--</div>-->
-                <!--文章内容部分-->
-                <div class="panel-body">
-                    <div style="text-align: center;"><a href="{{ study.get_absolute_url }}"><h4>{{ study.title }}</h4></a></div>
+        <div class="col-xl-10">
+            <div class="card">
+                <div class="card-body">
+                    <div style="text-align: center;"><a class="card-link" href="{{ study.get_absolute_url }}"><h4>{{ study.title }}</h4></a></div>
                     <p>
                         {{ study.excerpt }}
                     </p>

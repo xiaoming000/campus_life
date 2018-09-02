@@ -7,13 +7,15 @@
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <!--<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>-->
     <!--<script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>-->
     <!--<script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>-->
     <script src="{% static 'js/register.js' %}"></script>
     <script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+    <!--<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">-->
+    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
     <script>
         $(function(){
 
@@ -52,8 +54,8 @@
         </ul>
             {% else %}
         <ul class="list-inline">
-            <li><a href="#"><span class="glyphicon glyphicon-user" data-toggle="modal" data-target="#register">注册</span> </a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-log-in" data-toggle="modal" data-target="#login">登录</span> </a></li>
+            <li><a href="#"><span class="fa fa-user-plus" data-toggle="modal" data-target="#register">注册</span> </a></li>
+            <li style="padding-left: 5px;"><a href="#"><span class="fa fa-user" data-toggle="modal" data-target="#login">登录</span> </a></li>
         </ul>
         {% endif %}
     </div>
@@ -100,16 +102,14 @@
                         <a class="dropdown-item" href="#">成绩查询</a>
                     </div>
                 </li>
+                <li class="nav-item" style="padding-left: 25px;">
+                    <form class="form-inline" role="search">
+                        <input type="text" class="form-control" />
+                        <button class="btn btn-success" type="button">搜索</button>
+                    </form>
+                </li>
             </ul>
         </div>
-        <ul class="nav navbar-nav navbar-right">
-            <li class="nav-item navbar-right">
-                <form class="form-inline" role="search">
-                    <input type="text" class="form-control" />
-                    <button class="btn btn-success" type="button">搜索</button>
-                </form>
-            </li>
-        </ul>
         <div class="nav dropdown">
             <a href="#" class="nav-link dropdown-toggle" id="navbardrop" data-toggle="dropdown" style="color: #ccc;">个人中心</a>
             <div class="dropdown-menu" style="min-width: 104px;" >
@@ -138,12 +138,12 @@
     <div class="modal-dialog model-md">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    &times;
-                </button>
                 <h4 class="modal-title text-center" id="loginLabel">
                     登入
                 </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
             </div>
             <div class="modal-body">
                 <!--登入表单-->
@@ -151,28 +151,20 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="firstname" class="col-sm-3 control-label">用户名</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="firstname" placeholder="请输入用户名！" name="username">
-                        </div>
+                        <input type="text" class="form-control" id="firstname" placeholder="请输入用户名！" name="username">
                     </div>
                     <div class="form-group">
                         <label for="lastname" class="col-sm-3 control-label">密码</label>
-                        <div class="col-sm-6">
-                            <input type="password" class="form-control" id="lastname" placeholder="请输入您的密码" name="password">
-                        </div>
+                        <input type="password" class="form-control" id="lastname" placeholder="请输入您的密码" name="password">
                     </div>
-                    <div class="form-group">
-                        <label for="lastname" class="col-sm-3 control-label">验证码</label>
-                        <div>
-                            <input id="valid-inp" name="valifycode" class="form-control" type="text" placeholder="请输入验证码" autocomplete="off">
-                        </div>
-                        <div style="border: 1px solid red;padding: 0px;">
-                            <img id='verifycode' src="/verifycode/?1" alt="CheckCode" style="border: 1px solid red;padding: 0px;margin: 0px;" />
-                        </div>
+                    <div class="form-group clearfix">
+                        <label for="lastname" class="control-labe">验证码</label>
+                        <input id="valid-inp" name="valifycode" class="form-control float-left" type="text" placeholder="请输入验证码" autocomplete="off">
+                        <img id='verifycode' src="/verifycode/?1" alt="CheckCode" style="padding-left: 10px;" />
                     </div>
                     <div>
-                            <button type="submit" class="btn-lg btn-primary col-lg-offset-5" style="padding: 10px 30px;">登录</button>
-                            <a class="col-lg-offset-3" href="#">忘记密码</a>
+                        <button type="submit" class="btn btn-primary" style="padding: 10px 30px;">登录</button>
+                        <a class="col-lg-offset-3" href="#">忘记密码</a>
                     </div>
                 </form>
             </div>
@@ -184,12 +176,8 @@
     <div class="modal-dialog model-md">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    &times;
-                </button>
-                <h4 class="modal-title text-center" id="registerLabel">
-                    注册
-                </h4>
+                <h4 class="modal-title" id="registerLabel">注册</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <div class="modal-body">
                 <!--注册表单-->
@@ -197,53 +185,45 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="registername" class="col-sm-3 control-label">用户名</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="registername" placeholder="请输入用户名" name="username" value="">
-                        </div>
-                        <div class="popover-options">
-                            <a href="#" title="提示格式："  data-container="body" data-toggle="popover" data-placement="left"
-                                style="font-size: 14px;" data-content="
-                                    1.用户名：150个字符或者更少。包含字母，数字和仅有的@/./+/-/_符号。</br>
-                                    2.你的密码不能与其他个人信息太相似</br>
-                                    3.你的密码必须包含至少 8 个字符</br>
-                                    4.你的密码不能是大家都爱用的常见密码</br>
-                                    5.你的密码不能全部为数字
-                            ">提示</a>
-                        </div>
+                        <input type="text" class="form-control" id="registername" placeholder="请输入用户名" name="username" value="">
                     </div>
                     <div class="form-group">
-                        <label for="lastname" class="col-sm-3 control-label">邮箱</label>
-                        <div class="col-sm-6">
-                            <input type="email" class="form-control" id="registeremail" placeholder="请输入您的邮箱" name="email" value="">
-                        </div>
+                        <label for="lastname" class="control-label">邮箱</label>
+                        <input type="email" class="form-control" id="registeremail" placeholder="请输入您的邮箱" name="email" value="">
                     </div>
                     <div class="form-group">
-                        <label for="registerpwd1" class="col-sm-3 control-label">密码</label>
-                        <div class="col-sm-6">
-                            <input type="password" class="form-control" id="registerpwd1" placeholder="请输入您的密码" name="password1" value="">
-                        </div>
+                        <label for="registerpwd1" class="control-label">密码</label>
+                        <input type="password" class="form-control" id="registerpwd1" placeholder="请输入您的密码" name="password1" value="">
                     </div>
                     <div class="form-group">
-                        <label for="registerpwd2" class="col-sm-3 control-label">确认密码</label>
-                        <div class="col-sm-6">
-                            <input type="password" class="form-control" id="registerpwd2" placeholder="请确认您的密码" name="password2" value="">
-                        </div>
+                        <label for="registerpwd2" class="control-label">确认密码</label>
+                        <input type="password" class="form-control" id="registerpwd2" placeholder="请确认您的密码" name="password2" value="">
                     </div>
                     <input type="hidden" name="next" value="{{ next }}"/>
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-6">
                             <span id="error" style="display: none;color: red;font-size: 16px;">错误提示:</span>
                         </div>
-                        <div class="col-sm-offset-2 col-sm-7">
+                        <div class="">
                             <span style="color: red;font-size: 16px;">
                                 {% for field in form %}
                                     {{ field.errors }}
                                 {% endfor %}
                             </span>
                         </div>
-                        <div class="col-sm-3">
+                        <div>
                             <button type="submit" class="btn btn-primary" id="register_sub" title="警告！"
                                     data-container="body" data-toggle="popover" data-placement="left" data-content="你的输入不合法！无法提交！">注册</button>
+                            <div class="popover-options" style="display: inline;">
+                                <a href="#" title="提示格式："  data-container="body" data-toggle="popover" data-placement="right"
+                                    style="font-size: 14px;" data-content="
+                                        1.用户名：150个字符或者更少。包含字母，数字和仅有的@/./+/-/_符号。</br>
+                                        2.你的密码不能与其他个人信息太相似</br>
+                                        3.你的密码必须包含至少 8 个字符</br>
+                                        4.你的密码不能是大家都爱用的常见密码</br>
+                                        5.你的密码不能全部为数字
+                                ">提示</a>
+                            </div>
                         </div>
                     </div>
                 </form>

@@ -1,3 +1,4 @@
+from datetime import datetime
 import markdown
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
@@ -14,13 +15,15 @@ class NewsView(View):
         form = RegisterForm()  # 渲染注册空表单
         redirect_to = request.POST.get('next', request.GET.get('next', ''))
         news = News.objects.all()
+        now_time = datetime.now()
         return render(request, 'news/news.html', {
             'form': form,
             'news': news,
             'next': redirect_to,
             'fail': 0,
             'htitle': '校园新闻',
-            'nav': 2
+            'nav': 2,
+            'now_time': now_time
         })
 
 

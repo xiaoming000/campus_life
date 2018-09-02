@@ -1,25 +1,56 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% block head %}
+<script>
+    $(function(){
+        var push_info = $(".push_info");
+        for (var i=0; i < push_info.length; i++) {
+            // alert(push_info.eq(i).children(".created_time_day").val());
+            if ( push_info.eq(i).children(".created_time_day").val() == push_info.eq(i).children(".now_time_day").val()
+            && push_info.eq(i).children(".created_time_month").val() == push_info.eq(i).children(".now_time_month").val()
+            && push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val() ) {
+                push_info.eq(i).children(".time").text("今天");
+            } else if ( push_info.eq(i).children(".created_time_day").val() == push_info.eq(i).children(".now_time_day").val()-1
+            && push_info.eq(i).children(".created_time_month").val() == push_info.eq(i).children(".now_time_month").val()
+            && push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val() ) {
+                push_info.eq(i).children(".time").text("昨天");
+            } else if ( push_info.eq(i).children(".created_time_day").val() == push_info.eq(i).children(".now_time_day").val()-2
+            && push_info.eq(i).children(".created_time_month").val() == push_info.eq(i).children(".now_time_month").val()
+            && push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val() ) {
+                push_info.eq(i).children(".time").text("前天");
+            } else if ( push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val()) {
+                push_info.eq(i).children(".time").text(push_info.eq(i).children(".created_time_month").val() + "月" +
+                push_info.eq(i).children(".created_time_day").val() + "日");
+            } else {
+                push_info.eq(i).children(".time").text(push_info.eq(i).children(".created_time_year").val() + "年" +
+                push_info.eq(i).children(".created_time_month").val() + "月" +
+                push_info.eq(i).children(".created_time_day").val() + "日");
+            }
+        }
+    });
+</script>
+{% endblock head %}
+
 {% block main %}
 <div class="container">
     {% for new in news %}
-    <div class="row clearfix">
+    <div class="row" style="margin: 10px 0px">
         <!--发文人头像和时间信息-->
-        <div class="col-lg-offset-1 col-xs-2 col-lg-1">
-            <img src="{% static 'img/touxiang1.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre">
-            <span>{{ new.created_time }}</span>
+        <div class="col-lg-offset-1 col-xl-1 col-sm-12 push_info">
+            <img src="{% static 'img/touxiang1.jpg' %}" class="img-fluid rounded-circle" alt="Cinque Terre" style="width: 60px; height: 60px;">
+            <span class="time"></span>
+            <span>{{ new.created_time|date:"H:i" }} </span>
+            <input class="created_time_day" type="hidden" value="{{ new.created_time.day }}">
+            <input class="created_time_month" type="hidden" value="{{ new.created_time.month }}">
+            <input class="created_time_year" type="hidden" value="{{ new.created_time.year }}">
+            <input class="now_time_day" type="hidden" value="{{ now_time.day }}">
+            <input class="now_time_month" type="hidden" value="{{ now_time.month }}">
+            <input class="now_time_year" type="hidden" value="{{ now_time.year }}">
         </div>
         <!--文章内容主体-->
         <div class="col-xs-10 col-lg-8">
-            <div class="panel panel-info">
-                <!--&lt;!&ndash;文章title部分&ndash;&gt;-->
-                <!--<div class="panel-heading">-->
-                    <!--<h3 class="panel-title text-center">-->
-                        <!--带有 title 的面板标题-->
-                    <!--</h3>-->
-                <!--</div>-->
-                <!--文章内容部分-->
-                <div class="panel-body">
+            <div class="card">
+                <div class="card-body">
                     <div style="text-align: center;"><a href="{{ new.get_absolute_url }}"><h4>{{ new.title }}</h4></a></div>
                     <p>
                         {{ new.excerpt }}
@@ -36,58 +67,58 @@
                     <!--</span>-->
                 <!--</div>-->
                 <!--评论回复内容-->
-                <div>
-                    <ul class="list-group" style="margin: 0px;">
-                        <li class="list-group-item">
-                            <div>
-                                <!--评论-->
-                                <div class="clearfix">
-                                    <div class="pull-left">
-                                        <a href="#">
-                                            <img src="{% static 'img/touxiang1.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre" style="width: 25px;height: 25px;">
-                                        </a>
-                                    </div>
-                                    <div class="pull-left">
-                                        <a>昵称：</a>内容
-                                    </div>
-                                </div>
-                                <!--回复-->
-                                <div style="padding: 0px 0px 0px 25px;">
-                                    <div>
-                                        <div>
-                                            <div class="clearfix">
-                                                <div class="pull-left">
-                                                    <a href="#">
-                                                        <img src="{% static 'img/touxiang2.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre" style="width: 25px;height: 25px;">
-                                                    </a>
-                                                </div>
-                                                <div class="pull-left">
-                                                    <a href="#">昵称</a> 回复<a  href="#">昵称</a>内容
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
+                <!--<div>-->
+                    <!--<ul class="list-group" style="margin: 0px;">-->
+                        <!--<li class="list-group-item">-->
+                            <!--<div>-->
+                                <!--&lt;!&ndash;评论&ndash;&gt;-->
+                                <!--<div class="clearfix">-->
+                                    <!--<div class="pull-left">-->
+                                        <!--<a href="#">-->
+                                            <!--<img src="{% static 'img/touxiang1.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre" style="width: 25px;height: 25px;">-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                    <!--<div class="pull-left">-->
+                                        <!--<a>昵称：</a>内容-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--&lt;!&ndash;回复&ndash;&gt;-->
+                                <!--<div style="padding: 0px 0px 0px 25px;">-->
+                                    <!--<div>-->
+                                        <!--<div>-->
+                                            <!--<div class="clearfix">-->
+                                                <!--<div class="pull-left">-->
+                                                    <!--<a href="#">-->
+                                                        <!--<img src="{% static 'img/touxiang2.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre" style="width: 25px;height: 25px;">-->
+                                                    <!--</a>-->
+                                                <!--</div>-->
+                                                <!--<div class="pull-left">-->
+                                                    <!--<a href="#">昵称</a> 回复<a  href="#">昵称</a>内容-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</li>-->
 
-                        <li class="list-group-item">
-                            <div>
-                                                                <div class="clearfix">
-                                    <div class="pull-left">
-                                        <a href="#">
-                                            <img src="{% static 'img/touxiang1.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre" style="width: 25px;height: 25px;">
-                                        </a>
-                                    </div>
-                                    <div class="pull-left">
-                                        <a>昵称：</a>内容
-                                    </div>
-                                </div>
+                        <!--<li class="list-group-item">-->
+                            <!--<div>-->
+                                                                <!--<div class="clearfix">-->
+                                    <!--<div class="pull-left">-->
+                                        <!--<a href="#">-->
+                                            <!--<img src="{% static 'img/touxiang1.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre" style="width: 25px;height: 25px;">-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                    <!--<div class="pull-left">-->
+                                        <!--<a>昵称：</a>内容-->
+                                    <!--</div>-->
+                                <!--</div>-->
 
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                            <!--</div>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
             </div>
         </div>
     </div>
