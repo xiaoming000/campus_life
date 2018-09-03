@@ -139,4 +139,32 @@ $(function () {
             $("#tags_input").val(str);
         });
     });
+
+     // 日期
+    var push_info = $(".push_info");
+    for (var i=0; i < push_info.length; i++) {
+        // alert(push_info.eq(i).children(".created_time_day").val());
+        if ( push_info.eq(i).children(".created_time_day").val() == push_info.eq(i).children(".now_time_day").val()
+        && push_info.eq(i).children(".created_time_month").val() == push_info.eq(i).children(".now_time_month").val()
+        && push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val() ) {
+            push_info.eq(i).children(".time").text("今天").css("paddingLeft", '12px');
+        } else if ( push_info.eq(i).children(".created_time_day").val() ==push_info.eq(i).children(".now_time_day").val()-1
+        && push_info.eq(i).children(".created_time_month").val() == push_info.eq(i).children(".now_time_month").val()
+        && push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val() ) {
+            push_info.eq(i).children(".time").text("昨天").css("paddingLeft", '12px');;
+        } else if ( push_info.eq(i).children(".created_time_day").val() == push_info.eq(i).children(".now_time_day").val()-2
+        && push_info.eq(i).children(".created_time_month").val() == push_info.eq(i).children(".now_time_month").val()
+        && push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val() ) {
+            push_info.eq(i).children(".time").text("前天").css("paddingLeft", '12px');;
+        } else if ( push_info.eq(i).children(".created_time_year").val() == push_info.eq(i).children(".now_time_year").val()) {
+            push_info.eq(i).children(".time").text(push_info.eq(i).children(".created_time_month").val() + "月" +
+            push_info.eq(i).children(".created_time_day").val() + "日");
+        } else {
+            push_info.eq(i).children(".time").text(push_info.eq(i).children(".created_time_year").val() + "年" +
+            push_info.eq(i).children(".created_time_month").val() + "月" +
+            push_info.eq(i).children(".created_time_day").val() + "日");
+        }
+    }
+
+
 });

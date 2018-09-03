@@ -4,7 +4,6 @@ from .forms import RegisterForm
 from .models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
-import io
 
 
 def verifycode(request):
@@ -33,7 +32,7 @@ def verifycode(request):
     for i in range(0, 4):
         rand_str += random.choice([chr(random.randint(65, 90)) ,str(random.randint(0, 9))])
     # 构造字体对象
-    font = ImageFont.truetype('calibriz.ttf', 23)
+    font = ImageFont.truetype('DejaVuSansMono.ttf', 23)
     # 构造字体颜色
     fontcolor = (255, random.randrange(0, 255), random.randrange(0, 255))
     # 绘制4个字

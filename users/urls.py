@@ -1,7 +1,6 @@
 from django.conf.urls import url
 from .views import UserAjax, Register, Login, Index, loginout, verifycode, InfoView
 
-
 app_name = 'users'
 urlpatterns = [
     url(r'^userajax/$', UserAjax, name='userajax'),
