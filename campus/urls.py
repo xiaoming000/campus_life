@@ -23,4 +23,6 @@ urlpatterns = [
     path(r'post/', include('post.urls')),
     path(r'graduate/', include('graduate.urls')),
     path(r'tinymce/', include('tinymce.urls')),
+    path('accounts/', include('allauth.urls')),
+    path(r'^search/', include('haystack.urls')),
 ]

@@ -42,6 +42,13 @@ INSTALLED_APPS = [
     'post',
     'graduate',
     'tinymce',  # 富文本编辑器
+    'haystack',
+
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
 ]
 
 MIDDLEWARE = [
@@ -143,3 +150,35 @@ TINYMCE_DEFAULT_CONFIG = {
     'width': 600,
     'height': 400,
 }
+
+# ****************************第三方登入基本设置*************************
+# 基本设定
+SITE_ID = 1
+
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+# LOGIN_REDIRECT_URL = '/accounts/profile/'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+# 邮箱设定
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = '664374295@qq.com'  # 你的 QQ 账号和授权码
+EMAIL_HOST_PASSWORD = 'yensqsdgedkkbejc'
+EMAIL_USE_TLS = True  # 这里必须是 True，否则发送不成功
+EMAIL_FROM = 'Tencent<664374295@qq.com>'  # 你的 QQ 账号
+DEFAULT_FROM_EMAIL = '664374295@qq.com'
+
+
+# *********************************全文检索***********************************
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    },
+}
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
