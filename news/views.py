@@ -5,19 +5,17 @@ from django.views import View
 from django.views.generic import DetailView
 from markdown.extensions.toc import TocExtension
 from django.utils.text import slugify
-from users.forms import RegisterForm
-from .forms import NewsCommentForm
-from .models import News
+# from users.forms import RegisterForm
+from .forms import NewsCommentForm, NewsReplyForm
+from .models import News, NewsComment, Reply
 
 
 class NewsView(View):
     def get(self, request):
-        form = RegisterForm()  # 渲染注册空表单
         redirect_to = request.POST.get('next', request.GET.get('next', ''))
         news = News.objects.all()
         now_time = datetime.now()
         return render(request, 'news/news.html', {
-            'form': form,
             'news': news,
             'next': redirect_to,
             'fail': 0,
@@ -54,11 +52,11 @@ class NewsDetailView(DetailView):
         news = super(NewsDetailView, self).get_object(queryset=None)
         tags_list = news.tags.all()
         form = NewsCommentForm()
-        comment_list = news.newscoment_set.all()
+        comment_list = news.newscomment_set.all()
         context.update({
             'tags_list': tags_list,
             'nav': 2,
-            'htitle': '校园新闻-'+ news.title,
+            'htitle': '校园新闻-' + news.title,
             'form': form,
             'comment_list': comment_list
         })
@@ -75,15 +73,38 @@ def news_comment(request, news_pk):
             comment.news = news
             comment.user = user
             comment.save()
-
             return redirect(news)
         else:
-            comment_list = news.newscoment_set.all()
+            comment_list = news.newscomment_set.all()
             context = {
-                'post': news,
+                'newst': news,
                 'form': form,
                 'comment_list': comment_list
             }
-        return render(request, 'news/detail.html', context=context)
+            return render(request, 'news/detail.html', context=context)
+    return redirect(news)
 
+
+def news_reply(request, news_pk):
+    news = get_object_or_404(News, pk=news_pk)
+    user = request.user
+    if request.method == "POST":
+        reply_form = NewsReplyForm(request.POST)
+        if reply_form.is_valid():
+            reply_form = reply_form.save(commit=False)
+            if request.POST['comment_reply']:
+                reply_form.comment_reply = Reply.objects.filter(pk=request.POST['comment_reply'])[0]
+            reply_form.user = user
+            reply_form.save()
+
+            return redirect(news)
+        else:
+            comment_list = news.newscomment_set.all()
+            context = {
+                'post': news,
+                'form': NewsReplyForm(),
+                'reply_form': reply_form,
+                'comment_list': comment_list
+            }
+        return render(request, 'news/detail.html', context=context)
     return redirect(news)

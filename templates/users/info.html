@@ -1,11 +1,111 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
-{% load news_tags %}
 {% load post_tags %}
-{% block main %}
-<div class="container">
-    <div class="row">
 
+{% block main %}
+<div class="container" xmlns="http://www.w3.org/1999/html">
+
+
+    <div class="row user_info">
+        <div class="col-md-3">
+            <img class="" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" style="width: 200px;height: 200px;">
+        </div>
+        <div class="col-md-9">
+            <div>
+                <span class="info_username">{{ user_it.username }}</span>
+                <span class="info_name">{{user_pro.name}}</span>
+            </div>
+            <p>{{user_pro.introduce}}</p>
+            <div class="user_info_show">
+                <i class="fa fa-calendar"></i><span class="user_info_joined">{{ user_it.date_joined | timesince }}</span>前 加入
+                <i class="fa fa-envelope"></i><span class="user_info_joined">{{ user_it.email }}</span>
+            </div>
+            <div class="user_info_operate">
+                <!--如果登入的是管理员并且不是自己的主页-->
+                {% if not user_it.is_staff and user.is_staff  and not identity %}
+                    {% if user_it.is_active %}
+                    <button type="button" class="btn btn-sm btn-secondary">封禁</button>
+                    {% else %}
+                    <button type="button" class="btn btn-sm btn-danger">解封</button>
+                    {% endif %}
+                    <button type="button" class="btn btn-sm btn-secondary">编辑</button>
+                <!--如果是自己的主页-->
+                {% elif identity %}
+                <button type="button" class="btn btn-sm btn-secondary float-right"><a href="{% url 'users:edit' user_it.id %}">编辑</a></button>
+                {% elif not identity %}
+                <button type="button" class="btn btn-sm btn-secondary float-right">关注</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="user_info_nav">
+        <div class="">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item"><a class="nav-link active" href="#post" data-toggle="tab">发表的文章</a></li>
+                <li class="nav-item"><a class="nav-link" href="#collects" data-toggle="tab">收藏</a></li>
+                <li class="nav-item"><a class="nav-link" href="#follower" data-toggle="tab">关注</a></li>
+                <li class="nav-item"><a class="nav-link" href="#followed" data-toggle="tab">被关注</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="container tab-pane active" id="post">
+                {% get_recent_post_all user_it as recent_post_list %}
+                <ul class="list-group">
+                    {% for post in recent_post_list %}
+                    <li class="list-group-item">
+                        <h5><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h5>
+                        <p>{{ post.excerpt }}</p>
+                        <div class="article_info">
+                            <span><i class="fa fa-leaf" style="padding-right: 2px;"></i>{{ post.category.name }}</span>
+                            <span><i class="fa fa-clock-o"></i><time datetime="{{ post.created_time }}">{{ post.created_time | timesince }}前</time></span>
+                            <span><i class="fa fa-comment"></i>{{ post.comment_set.count }} 评论</span>
+                            <span><i class="fa fa-eye"></i>{{post.views}} 阅读</span>
+                        </div>
+                    </li>
+                    {% empty %}
+                    暂无文章！
+                    {% endfor %}
+                </ul>
+                </div>
+                <div class="container tab-pane fade" id="collects">
+                <ul class="list-group">
+                    {% for post in user_pro.collects.all %}
+                    <li class="list-group-item">
+                        <h5><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h5>
+                        <p>{{ post.excerpt }}</p>
+                        <div class="article_info">
+                            <span><i class="fa fa-leaf" style="padding-right: 2px;"></i>{{ post.category.name }}</span>
+                            <span><i class="fa fa-clock-o"></i><time datetime="{{ post.created_time }}">{{ post.created_time | timesince }}前</time></span>
+                            <span><i class="fa fa-comment"></i>{{ post.comment_set.count }} 评论</span>
+                            <span><i class="fa fa-eye"></i>{{post.views}} 阅读</span>
+                            <span><i class="fa fa-user"></i>{{post.author.username}} </span>
+                        </div>
+                    </li>
+                    {% empty %}
+                    暂无文章！
+                    {% endfor %}
+                </ul>
+                </div>
+                <div class="container tab-pane fade" id="follower">
+                    {% for follow in user_it.follower.all %}
+                        <div class="float-left follower">
+                            <img class="" src="{{ follow.followed.socialaccount_set.all.0.get_avatar_url }}" style="width: 100px;height: 100px;">
+                            <div class="text-center follower.username">
+                                {{ follow.followed.username }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="container tab-pane fade" id="followed">
+                    {% for follow in user_it.followed.all %}
+                        <div class="float-left follower">
+                            <img class="" src="{{ follow.follower.socialaccount_set.all.0.get_avatar_url }}" style="width: 100px;height: 100px;">
+                            <div class="text-center follower.username">
+                                {{ follow.follower.username }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock main %}

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'graduate',
     'tinymce',  # 富文本编辑器
     'haystack',
+    'widget_tweaks',
 
     'django.contrib.sites',
     'allauth',
@@ -153,7 +154,9 @@ TINYMCE_DEFAULT_CONFIG = {
 
 # ****************************第三方登入基本设置*************************
 # 基本设定
-SITE_ID = 1
+SITE_ID = 2
+
+LOGIN_REDIRECT_URL = "/"   # 登入跳转链接
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True

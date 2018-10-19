@@ -1,131 +1,187 @@
-from django.shortcuts import render, redirect, reverse, HttpResponse, HttpResponseRedirect
-from django.http import JsonResponse
-from .forms import RegisterForm
-from .models import User
+from django.shortcuts import render, redirect, reverse, HttpResponse, HttpResponseRedirect, get_object_or_404
+from django.http import JsonResponse, Http404
+from .forms import EditProForm, EditUserForm
+from .models import User, Profile, Follow, Message
 from django.contrib.auth import authenticate, login, logout
-from django.views import View
+from django.views import View, generic
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.contrib import messages
 
 
-def verifycode(request):
-    # 引入绘图模块
-    from PIL import Image, ImageDraw, ImageFont
-    # 引入随机函数模块
-    import random
-    # 定义变量，用于画面的背景色、宽、高
-    bgcolor = (random.randrange(20, 100), random.randrange(
-        20, 100), 255)
-    width = 100
-    height = 25
-    # 创建画面对象
-    im = Image.new('RGB', (width, height), bgcolor)
-    # 创建画笔对象
-    draw = ImageDraw.Draw(im)
-    # 调用画笔的point()函数绘制噪点
-    for i in range(0, 100):
-        xy = (random.randrange(0, width), random.randrange(0, height))
-        fill = (random.randrange(0, 255), 255, random.randrange(0, 255))
-        draw.point(xy, fill=fill)
-    # 定义验证码的备选值
-    str1 = 'ABCD123EFGHIJK456LMNOPQRS789TUVWXYZ0'
-    # 随机选取4个值作为验证码
-    rand_str = ''
-    for i in range(0, 4):
-        rand_str += random.choice([chr(random.randint(65, 90)) ,str(random.randint(0, 9))])
-    # 构造字体对象
-    font = ImageFont.truetype('DejaVuSansMono.ttf', 23)
-    # 构造字体颜色
-    fontcolor = (255, random.randrange(0, 255), random.randrange(0, 255))
-    # 绘制4个字
-    draw.text((5, 2), rand_str[0], font=font, fill=fontcolor)
-    draw.text((25, 2), rand_str[1], font=font, fill=fontcolor)
-    draw.text((50, 2), rand_str[2], font=font, fill=fontcolor)
-    draw.text((75, 2), rand_str[3], font=font, fill=fontcolor)
-    # 释放画笔
-    del draw
-    # 存入session，用于做进一步验证
-    request.session['verifycode'] = rand_str
-    # 内存文件操作
-    import io
-    buf = io.BytesIO()
-    # 将图片保存在内存中，文件类型为png
-    im.save(buf, 'png')
-    # 将内存中的图片数据返回给客户端，MIME类型为图片png
-    return HttpResponse(buf.getvalue(), 'image/png')
-
-
-def Index(request):
+def index(request):
     context = {
         'htitle': '校园生活-首页'
     }
     return render(request, 'users/index.html', context)
 
 
-def Register(request):
-    # 从 get 或者 post 请求中获取 next 参数值
-    # get 请求中，next 通过 url 传递，即 /?next=value
-    # post 请求中，next 通过表单传递，即 <input type="hidden" name="next" value="{{ next }}"/>
-    redirect_to = request.POST.get('next', request.GET.get('next', ''))
+class LoginRequiredMixin(object):
+    @method_decorator(login_required(login_url='/accounts/login/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
-    # 只有当请求为 POST 时，才表示用户提交了注册信息
-    if request.method == 'POST':
-        # request.POST 是一个类字典数据结构，记录了用户提交的注册信息
-        # 这里提交的就是用户名（username）、密码（password）、确认密码、邮箱（email）
-        # 用这些数据实例化一个用户注册表单
-        form = RegisterForm(request.POST)
 
-        # 验证数据的合法性
-        if form.is_valid():
-            # 如果提交数据合法，调用表单的 save 方法将用户数据保存到数据库
-            form.save()
+class EditBaseView(LoginRequiredMixin, generic.DetailView):
+    model = User
+    template_name = 'users/edit_base.html'
+    context_object_name = 'user_it'
 
-            if redirect_to:
-                return redirect(redirect_to)
-            else:
-                return redirect('/news')
+    def get(self, request, *args, **kwargs):
+        response = super(EditBaseView, self).get(request, *args, **kwargs)
+        user_it = super(EditBaseView, self).get_object(queryset=None)
+        # redirect(reverse('users:edit', kwargs={'pk': user_it.id}))
+        # redirect('edit/' + kwargs['pk'] + '/')
+        # return  HttpResponse(kwargs['pk'])
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super(EditBaseView, self).get_context_data(**kwargs)
+        user_it = super(EditBaseView, self).get_object(queryset=None)
+        context.update({
+            'user_it': user_it,
+        })
+        return context
+
+
+def edit_nav(request):
+    if request.session['user_it']:
+        user_it = request.session['user_it']
     else:
-        # 请求不是 POST，表明用户正在访问注册页面，展示一个空的注册表单给用户
-        form = RegisterForm()
-
-    # 渲染模板
-    # 如果用户正在访问注册页面，则渲染的是一个空的注册表单
-    # 如果用户通过表单提交注册信息，但是数据验证不合法，则渲染的是一个带有错误信息的表单
-    # 将记录用户注册前页面的 redirect_to 传给模板，以维持 next 参数在整个注册流程中的传递
-    return render(request, 'users/news.html', context={'form': form, 'next': redirect_to, 'fail': 1})
+        raise Http404
+    return render(request, 'users/_edit_nav.html', {'user_it': user_it})
 
 
-def Login(request):
-    redirect_to = request.POST.get('next', request.GET.get('next', ''))
-    if request.method == 'POST':
-        username = request.POST.get('username', 'fsf')
+class InfoView(LoginRequiredMixin, View):
+
+    def get(self, request, pk):
+        user = request.user
+        user_it = get_object_or_404(User, pk=pk)
+        # user_pro = get_object_or_404(Profile, pk=pk)
+        user_pro = Profile.objects.filter(pk=pk)
+        request.session['user_it'] = pk
+        follower = Follow.objects.filter(follower=pk)
+
+        identity = 0
+        if user_it == user:
+            identity = 1
+        context = {
+            'identity': identity,
+            'user_it': user_it,
+            'user_pro': user_pro,
+            'follower': follower,
+        }
+        return render(request, 'users/info.html', context=context)
+
+
+class EditView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        user_it = get_object_or_404(User, pk=pk)
+        user_info = get_object_or_404(Profile, pk=pk)
+        context = {
+            'user_it': user_it,
+            'user_info': user_info,
+        }
+        return render(request, 'users/edit.html', context=context)
+
+    def post(self, request, pk):
+        user_it = get_object_or_404(User, pk=pk)
+        user_info = get_object_or_404(Profile, pk=pk)
+
+        user_form = EditUserForm(request.POST, instance=user_it)
+        pro_form = EditProForm(request.POST, instance=user_info)
+        if user_form.is_valid() and pro_form.is_valid():
+            try:
+                user_form.save()
+                pro_form.save()
+            except:
+                raise Http404("保存失败！")
+            messages.success(request, '修改成功！')
+            return redirect('/info/' + pk + '/')
+        else:
+            context = {
+                'user_form': user_form,
+                'pro_form': pro_form
+            }
+            return render(request, 'users/edit.html', context=context)
+
+
+class EditActivateView(LoginRequiredMixin, View):
+
+    def get(self, request, user_pk):
+        user_it = get_object_or_404(User, pk=user_pk)
+        user_pro = get_object_or_404(Profile, pk=user_pk)
+        context = {
+            'user_it': user_it,
+            'user_pro': user_pro
+        }
+        return render(request, 'users/activate.html', context=context)
+
+    def post(self, request, user_pk):
+        user_pro = get_object_or_404(Profile, pk=user_pk)
+        name_show = request.POST.get('name_show', '')
+        email_show = request.POST.get('email_show', '')
+        follow_show = request.POST.get('follow_show', '')
+        collects_show = request.POST.get('collects_show', '')
+        name_show = 1 if name_show else 0
+        email_show = 1 if email_show else 0
+        follow_show = 1 if follow_show else 0
+        collects_show = 1 if collects_show else 0
+        try:
+            user_pro.name_show = name_show
+            user_pro.email_show = email_show
+            user_pro.follow_show = follow_show
+            user_pro.collects_show = collects_show
+            user_pro.save()
+            messages.success(request, '隐私设置修改成功！')
+        except:
+            raise Http404
+        return redirect('/info/' + user_pk + '/')
+
+
+class EditUserDel(LoginRequiredMixin, View):
+    def get(self, request, user_pk):
+        user_it = get_object_or_404(User, pk=user_pk)
+        user_pro = get_object_or_404(Profile, pk=user_pk)
+        context = {
+            'user_it': user_it,
+            'user_pro': user_pro
+        }
+        return render(request, 'users/Edit_user_del.html', context=context)
+
+    def post(self, request, user_pk):
+        username = request.POST.get('username', '')
         password = request.POST.get('password', '')
-        vc = request.POST.get('valifycode', '')
-        if vc.upper() == request.session['verifycode']:
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect(reverse('users:index'))
-            else:
-                return render(request, 'users/index.html', {
-                    'username': username,
-                    'password': password,
-                })
+        user_del = authenticate(request, username=username, password=password)
+        # return HttpResponse(user.id)
+        if user_del == request.user or request.use.is_staff:
+            try:
+                user_del.is_active = 0
+                user_del.save()
+                messages.success(request, '隐私设置修改成功！')
+            except:
+                raise Http404
+        else:
+            raise Http404
+        return redirect('/info/' + user_pk + '/')
 
 
-def UserAjax(request):
-    username = request.POST['username']
-    user = User.objects.filter(username=username)
-    if user:
-        return JsonResponse({'repeat': 1})
-    else:
-        return JsonResponse({'repeat': 0})
-    # return HttpResponse(user)
+class MessageView(LoginRequiredMixin, generic.ListView):
+    model = Message
+    template_name = 'users/message.html'
+    context_object_name = 'message'
+
+    def get_queryset(self):
+        return super(MessageView, self).get_queryset().filter(is_delete=0)
 
 
-def loginout(request):
-    logout(request)
-    return redirect('/')
+class MessageNoReadView(MessageView):
+
+    def get_queryset(self):
+        return super(MessageNoReadView, self).get_queryset().filter(is_delete=0, is_read=0)
 
 
-class InfoView(View):
-    def get(self, request):
-        return render(request, 'users/info.html')
+class MessageReadView(MessageView):
+
+    def get_queryset(self):
+        return super(MessageReadView, self).get_queryset().filter(is_delete=0, is_read=1)

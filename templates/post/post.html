@@ -8,16 +8,9 @@
     {% for post in post_list %}
     <div class="row"  style="margin: 10px 0px">
         <!--发文人头像和时间信息-->
-        <div class="col-lg-offset-1 col-xl-1 col-sm-12 push_info">
-            <img src="{% static 'img/touxiang1.jpg' %}" class="img-fluid rounded-circle" alt="Cinque Terre" style="width: 60px; height: 60px;">
-            <span class="time"></span>
-            <span style="padding-left: 10px;">{{ post.created_time|date:"H:i" }} </span>
-            <input class="created_time_day" type="hidden" value="{{ post.created_time.day }}">
-            <input class="created_time_month" type="hidden" value="{{ post.created_time.month }}">
-            <input class="created_time_year" type="hidden" value="{{ post.created_time.year }}">
-            <input class="now_time_day" type="hidden" value="{{ now_time.day }}">
-            <input class="now_time_month" type="hidden" value="{{ now_time.month }}">
-            <input class="now_time_year" type="hidden" value="{{ now_time.year }}">
+        <div class="col-lg-offset-1 col-xl-2 col-sm-12 push_info">
+            <img class="img-fluid rounded-circle float-left" src="{% static 'img/touxiang1.jpg' %}" alt="Cinque Terre" style="width: 60px; height: 60px;">
+            <div class="float-left info_time">{{ post.created_time| timesince }} 前</div>
         </div>
         <!--文章内容主体-->
         <div class="col-lg-10">
@@ -28,69 +21,6 @@
                         {{ post.excerpt }}
                     </p>
                 </div>
-                <!--文章点赞信息-->
-                <!--<div>-->
-                    <!--<img src="{% static 'img/zan.jpg' %}" class="img-responsive img-circle pull-left" alt="Cinque Terre" style="width: 25px;height: 25px;">-->
-                    <!--<span>-->
-                        <!--<a href="#">点赞人dasdad、</a>-->
-                        <!--<a href="#">点赞人dasd、</a>-->
-                        <!--<a href="#">点赞人dasda、</a>-->
-                        <!--<a href="#">点赞人dasdadad、</a>-->
-                    <!--</span>-->
-                <!--</div>-->
-                <!--评论回复内容-->
-                <!--<div>-->
-                    <!--<ul class="list-group">-->
-                        <!--<li class="list-group-item">-->
-                            <!--<div>-->
-                                <!--&lt;!&ndash;评论&ndash;&gt;-->
-                                <!--<div class="clearfix">-->
-                                    <!--<div class="pull-left">-->
-                                        <!--<a href="#">-->
-                                            <!--<img src="{% static 'img/touxiang1.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre" style="width: 25px;height: 25px;">-->
-                                        <!--</a>-->
-                                    <!--</div>-->
-                                    <!--<div class="pull-left">-->
-                                        <!--<a>昵称：</a>内容-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--&lt;!&ndash;回复&ndash;&gt;-->
-                                <!--<div style="padding: 0px 0px 0px 25px;">-->
-                                    <!--<div>-->
-                                        <!--<div>-->
-                                            <!--<div class="clearfix">-->
-                                                <!--<div class="pull-left">-->
-                                                    <!--<a href="#">-->
-                                                        <!--<img src="{% static 'img/touxiang2.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre" style="width: 25px;height: 25px;">-->
-                                                    <!--</a>-->
-                                                <!--</div>-->
-                                                <!--<div class="pull-left">-->
-                                                    <!--<a href="#">昵称</a> 回复<a  href="#">昵称</a>内容-->
-                                                <!--</div>-->
-                                            <!--</div>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</li>-->
-
-                        <!--<li class="list-group-item">-->
-                            <!--<div>-->
-                                <!--<div class="clearfix">-->
-                                    <!--<div class="pull-left">-->
-                                        <!--<a href="#">-->
-                                            <!--<img src="{% static 'img/touxiang1.jpg' %}" class="img-responsive img-circle" alt="Cinque Terre" style="width: 25px;height: 25px;">-->
-                                        <!--</a>-->
-                                    <!--</div>-->
-                                    <!--<div class="pull-left">-->
-                                        <!--<a>昵称：</a>内容-->
-                                    <!--</div>-->
-                                <!--</div>-->
-
-                            <!--</div>-->
-                        <!--</li>-->
-                    <!--</ul>-->
-                <!--</div>-->
             </div>
         </div>
     </div>

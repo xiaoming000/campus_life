@@ -24,5 +24,5 @@ urlpatterns = [
     path(r'graduate/', include('graduate.urls')),
     path(r'tinymce/', include('tinymce.urls')),
     path('accounts/', include('allauth.urls')),
-    path(r'^search/', include('haystack.urls')),
+    path(r'search/', include('haystack.urls')),
 ]

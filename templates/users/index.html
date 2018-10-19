@@ -3,18 +3,7 @@
 {% load news_tags %}
 {% load post_tags %}
 {% block head %}
-<style>
-   .nav-tabs li a:not(.active){
-       color: #444;
-   }
-    .tab-content .container ul a:link, a:visited{
-        color: #444444;
-        text-decoration:none;
-    }
-    .tab-content .container ul a:hover{
-        color: red;
-    }
-</style>
+
 {% endblock head %}
 {% block main %}
 <div class="container">
@@ -74,7 +63,7 @@
                             <ul>
                                 {% for news in recent_news_list %}
                                 <li>
-                                  <a href="{{ news.get_absolute_url }}">{{ news.title }}</a>
+                                  <a href="{{ news.get_absolute_url }}">{{ news.title | truncatechars:16 }}</a>
                                 </li>
                                 {% empty %}
                                 暂无文章！
@@ -86,7 +75,7 @@
                             <ul>
                                 {% for wall in recent_wall_list %}
                                 <li>
-                                  <a href="{{ wall.get_absolute_url }}">{{ wall.title }}</a>
+                                  <a href="{{ wall.get_absolute_url }}">{{ wall.title | truncatechars:16 }}</a>
                                 </li>
                                 {% empty %}
                                 暂无文章！
@@ -98,7 +87,7 @@
                             <ul>
                                 {% for study in recent_study_list %}
                                 <li>
-                                  <a href="{{ study.get_absolute_url }}">{{ study.title }}</a>
+                                  <a href="{{ study.get_absolute_url }}">{{ study.title | truncatechars:16 }}</a>
                                 </li>
                                 {% empty %}
                                 暂无文章！
@@ -142,7 +131,7 @@
                             <ul>
                                 {% for talk in recent_talk_list %}
                                 <li>
-                                  <a href="{{ talk.get_absolute_url }}">{{ talk.title }}</a>
+                                  <a href="{{ talk.get_absolute_url }}">{{ talk.title | truncatechars:16 }}</a>
                                 </li>
                                 {% empty %}
                                 暂无文章！

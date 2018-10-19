@@ -1,17 +1,17 @@
 from django import forms
-from .models import PostComent, Post, PostReply
+from .models import PostComment, Post, PostReply
 
 
 class PostCommentForm(forms.ModelForm):
     class Meta:
-        model = PostComent
+        model = PostComment
         fields = ['content']
 
 
 class PostReplyForm(forms.ModelForm):
     class Meta:
         model = PostReply
-        fields = ['reply_type', 'post_comment', 'content']
+        fields = ['reply_type', 'comment', 'text']
 
 
 class PostForm(forms.ModelForm):

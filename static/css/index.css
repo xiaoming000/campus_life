@@ -1,3 +1,26 @@
+a:link, a:active, a:visited {
+    color: #444444;
+    text-decoration: none;
+}
+a:hover {
+    color: red;
+    text-decoration: none;
+}
+
+/*flash消息样式*/
+.messages {
+    padding: 5px 0px;
+    margin: 5px 0px;
+    font-size: 20px;
+}
+.messages div{
+    text-align: center;
+}
+.messages button{
+    padding:0px 5px;
+    margin-right: 20px;
+}
+
 .form-group label {
     font-weight:normal;
     font-size:18px;
@@ -26,4 +49,110 @@
 }
 .g_info {
     /*color: #7ebfff;*/
+}
+
+/*搜索高亮*/
+span.highlighted {
+    color: red;
+}
+/*header*/
+#head {
+    height: 70px;
+    background: #d4edda url("../img/zhumeng.png") no-repeat center;
+}
+
+#footer {
+    height: 70px;
+    background-color: #d4edda;
+}
+
+/*news.html post study*/
+.info_time {
+    padding: 12px 3px;
+}
+
+/****************************detail.html********************************/
+.detail {
+    padding: 10px 0px;
+}
+.reply_comment_del{
+    color: #7ebfff;
+    display: none;
+    cursor: pointer;
+    padding: 5px 0px;
+}
+.reply_comment {
+    color: #7ebfff;
+    display: none;
+    cursor: pointer;
+    padding: 5px 0px;
+}
+.reply_r {
+    color: #7ebfff;
+    display: none;
+    cursor: pointer;
+    padding: 0px 5px;
+}
+#comment_list p{
+    display: inline;
+}
+
+/********************************info.html***********************/
+.user_info_show span{
+    padding: 0px 2px;
+}
+.user_info_joined{
+    color: #444444;
+}
+.user_info{
+    margin: 20px 0px;
+}
+.user_info .info_username{
+    font-size: 36px;
+}
+.user_info .info_name{
+    font-size: 20px;
+    color: #444444;
+}
+.user_info_operate{
+    width: 100%;
+}
+.user_info_operate a:link, .user_info_operate a:visited{
+    color: white;
+}
+.user_info_nav .nav-tabs{
+    padding: 0px 15px;
+}
+.user_info_nav #post, .user_info_nav #collects{
+    margin: 20px 0px;
+}
+.user_info_nav .article_info span{
+    padding: 0px 5px;
+    color: #28a745;
+}
+.follower{
+    margin: 20px;
+}
+.follower.username{
+    width: 100%;
+}
+
+/*****************************************edit.html***********************/
+.edit_header{
+    margin: 30px 0px;
+}
+.edit_nav{
+    padding: 10px 0px;
+    margin-bottom: 10px;
+    height: 150px;
+}
+.edit .card{
+}
+/*****************************************activate.html*********************/
+.form-check{
+    padding: 10px;
+    font-size: 18px;
+}
+.form-check-input{
+    zoom: 150%;
 }

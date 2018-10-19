@@ -1,0 +1,78 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+{% load widget_tweaks %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<div class="row" style="padding: 10px 0px;">
+    <div class="col-md-8 offset-md-2  border">
+
+        <h1>{% trans "Sign In" %}</h1>
+
+        {% get_providers as socialaccount_providers %}
+
+        {% if socialaccount_providers %}
+            <!--<p>{% blocktrans with site.name as site_name %}Please sign in with one-->
+            <!--of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>-->
+            <!--for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>-->
+            <p>请使用您现有的第三方帐户登录,或者<a href="{{ signup_url }}"><span style="color: red;"> 注册</span></a></p>
+
+            <div class="socialaccount_ballot">
+
+              <ul class="socialaccount_providers">
+                {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+              </ul>
+
+              <div class="login-or">{% trans 'or' %}</div>
+
+            </div>
+
+            {% include "socialaccount/snippets/login_extra.html" %}
+
+        {% else %}
+            <p>{% blocktrans %}If you have not created an account yet, then please
+            <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+        {% endif %}
+
+        <form class="login" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+                {% if field.name == 'remember' %}
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        {{ field }}记住我
+                      </label>
+                    </div>
+                {% else %}
+                    <div class="form-group w-75">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field|add_class:'form-control' }}
+                        {% for error in field.errors %}
+                            <span class="help-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <a class="button secondaryAction" href="{% url 'account_reset_password' %}">
+                <span style="color: red;">{% trans "Forgot Password?" %}</span>
+            </a>
+            <div class="form-group" style="padding: 10px 10px;">
+                <button class="botton btn-success btn-lg" type="submit">{% trans "Sign In" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

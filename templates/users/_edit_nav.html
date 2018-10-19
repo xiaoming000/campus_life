@@ -1,0 +1,23 @@
+<ul class="nav flex-column nav-pills">
+    <li class="nav-item">
+      <a class="nav-link {% if '/edit/' in request.path %} active {% endif %}" href="{% url 'users:edit' value %}">基本信息</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">更改头像</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if '/accounts/password/change/' in request.path %} active {% endif %}" href="{% url 'account_change_password' %}">更改密码</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if '/accounts/email/' in request.path %} active {% endif %}" href="{% url 'account_email' %}">更改邮箱</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">通知</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if '/edit_activate/' in request.path %} active {% endif %}" href="{% url 'users:edit_activate' value %}">隐私</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if '/edit_user_del/' in request.path %} active {% endif %}" href="{% url 'users:edit_user_del' value %}">删除账户</a>
+    </li>
+</ul>

@@ -4,238 +4,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    <title>{{ htitle }}</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-    <!--<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>-->
-    <!--<script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>-->
-    <!--<script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>-->
-    <script src="{% static 'js/register.js' %}"></script>
+
+    <script src="{% static 'js/index.js' %}"></script>
     <script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
-    <!--<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">-->
+
     <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
     <script>
-        $(function(){
-
-            {% if fail == 1 %}
-                $("#register").modal('show');
-            {% endif %}
-
-            $('#myCarousel').carousel({
-                interval: 3000
-            })
-            
-            $(".push").click(function () {
-                alert("你还未登入，不能发表文章！")
-            });
-
-            $('#verifycode').css('cursor','pointer').click(function() {
-                $(this).attr('src',$(this).attr('src')+1)
-            });
-        });
     </script>
     {% block head %}{% endblock head %}
 </head>
 <body>
 <!--herder-->
 <div id="head">
-    <div id="touxiang">
-        {% if user.is_authenticated %}
-        <ul class="nav navbar-nav">
-            <!--<li><span class="badge" style="color: red;">50</span></li>-->
-            <li>
-                <a href="#" style="margin: 0px;padding: 0px;">
-                    <img src="{% static 'img/touxiang2.jpg' %}" class="img-responsive img-circle" alt="touxiang" style="width: 60px;height: 60px;">
-                </a>
-            </li>
-            <!--<li><span style="color:white;">欢迎您：{{user.id}}</span></li>-->
-        </ul>
-            {% else %}
-        <ul class="list-inline">
-            <li><a href="#"><span class="fa fa-user-plus" data-toggle="modal" data-target="#register">注册</span> </a></li>
-            <li style="padding-left: 5px;"><a href="#"><span class="fa fa-user" data-toggle="modal" data-target="#login">登录</span> </a></li>
-        </ul>
-        {% endif %}
+    {% if user.is_authenticated %}
+    <div class="float-left">
+        <img class="rounded-circle" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" style="width: 70px;height: 70px;">
     </div>
+    <div class="float-right">
+        <a href="{% url 'account_logout' %}?next={{ request.path }}" style="font-size: 20px;padding-right: 10px;">
+            <i class="fa fa-sign-out"><span style="padding-left: 5px;">退出</span></i>
+        </a>
+    </div>
+    {% else %}
+    <div class="float-right">
+        <a href="{% url 'account_login' %}?next={{ request.path }}" style="font-size: 20px;padding-right: 10px;">
+            <i class="fa fa-user"><span style="padding-left: 5px;">登入</span></i>
+        </a>
+    </div>
+    {% endif %}
 </div>
 <!--导航栏-->
 <div class="clearfix">
     <nav class="navbar navbar-expand-xl bg-dark navbar-dark" role="navigation">
-        <!--导航栏首页-->
-        <a class="navbar-brand" href="{% url 'users:index' %}">首页</a>
-        <!--栏目-->
-        <div class="collapse navbar-collapse" id="collapsibleNavbar" style="font-size: 16px;">
-            <!--搜素栏目-->
-            <ul class="nav navbar-nav">
-                {% if nav == 2 %}
-                <li class="nav-item active"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li class="nav-item"> <a class="nav-link" class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
-                {% elif nav == 3 %}
-                <li class="nav-item"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li class="nav-item active"> <a class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
-                {% elif nav == 4 %}
-                <li class="nav-item"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li class="nav-item active"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
-                {% elif nav == 5 %}
-                <li class="nav-item"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
-                <li class="nav-item active"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
-                {% else %}
-                <li class="nav-item"> <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'post:wall' %}">校园万能墙</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'post:study' %}">学习交流</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a></li>
-                {% endif %}
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">信息查询<strong class="caret"></strong></a>
-                    <div class="dropdown-menu" style="min-width: 104px;">
-                        <a class="dropdown-item" href="#">成绩查询</a>
-                        <a class="dropdown-item" href="#">成绩查询</a>
-                    </div>
+        <div class="container">
+            <!--导航栏首页-->
+            <a class="navbar-brand" href="{% url 'users:index' %}">首页</a>
+            <!--栏目-->
+            <div class="collapse navbar-collapse" id="collapsibleNavbar" style="font-size: 16px;">
+                <!--搜素栏目-->
+                <ul class="nav navbar-nav bar">
+                    <li class="nav-item Python {% if '/news/' in request.path %} active {% endif %}">
+                        <a class="nav-link" href="{% url 'news:news_list' %}">校园新闻</a>
+                    </li>
+                    <li class="nav-item Linux {% if request.path == '/post/wall/' %} active {% endif %}">
+                        <a class="nav-link" href="{% url 'post:wall' %}">万能墙</a>
+                    </li>
+                    <li class="nav-item other {% if request.path == '/post/study/' %} active {% endif %}">
+                        <a class="nav-link" href="{% url 'post:study' %}">学习交流</a>
+                    </li>
+                    <li class="nav-item essay {% if request.path == '/graduate/' %} active {% endif %}">
+                        <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">信息查询<strong class="caret"></strong></a>
+                        <div class="dropdown-menu" style="min-width: 104px;">
+                            <a class="dropdown-item" href="#">成绩查询</a>
+                            <a class="dropdown-item" href="#">成绩查询</a>
+                        </div>
                 </li>
-                <li class="nav-item" style="padding-left: 25px;">
-                    <form class="form-inline" role="search">
-                        <input type="text" class="form-control" />
-                        <button class="btn btn-success" type="button">搜索</button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-        <div class="nav dropdown">
-            <a href="#" class="nav-link dropdown-toggle" id="navbardrop" data-toggle="dropdown" style="color: #ccc;">个人中心</a>
-            <div class="dropdown-menu" style="min-width: 104px;" >
-                <a class="dropdown-item" href="#">我的消息</a>
-                <a class="dropdown-item" href="#">我的信息</a>
+                </ul>
 
-                {% if user.is_authenticated %}
-                <a class="dropdown-item" href="{% url 'post:push_wall' %}?next={{ request.path }}&category=1">发墙</a>
-                <a class="dropdown-item" href="{% url 'post:push_wall' %}?next={{ request.path }}&category=2">发学习</a>
-                {% else %}
-                <a class="dropdown-item" href="#">发墙</a>
-                <a class="dropdown-item" href="#">发学习</a>
-                {% endif %}
-
-                <a class="dropdown-item" href="{% url 'users:info' %}">个人中心</a>
-                <a class="dropdown-item" href="{% url 'users:loginout' %}">注销登录</a>
+                <form class="form-inline navbar-form navbar-right" role="search" method="get" id="searchform" action="{% url 'haystack_search' %}">
+                    <input class="form-control" type="search" name="q" placeholder="搜索" required/>
+                    <button class="btn btn-success" type="submit">搜索</button>
+                </form>
             </div>
+
+            <div class="nav">
+                <a href="{% url 'users:message' %}"><i class="fa fa-bell-o" style="color: white;"></i></a>
+            </div>
+            <div class="nav dropdown">
+                <a href="#" class="nav-link dropdown-toggle" id="navbardrop" data-toggle="dropdown" style="color: #ccc;">个人中心</a>
+                <div class="dropdown-menu" style="min-width: 104px;" >
+                    <a class="dropdown-item" href="#">我的消息</a>
+                    <a class="dropdown-item" href="#">我的信息</a>
+
+                    {% if user.is_authenticated %}
+                    <a class="dropdown-item" href="{% url 'post:push_wall' %}?next={{ request.path }}&category=1">发墙</a>
+                    <a class="dropdown-item" href="{% url 'post:push_wall' %}?next={{ request.path }}&category=2">发学习</a>
+                    {% else %}
+                    <a class="dropdown-item" href="#">发墙</a>
+                    <a class="dropdown-item" href="#">发学习</a>
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                    <a class="dropdown-item" href="{% url 'users:info' user.id %}">个人中心</a>
+                    <a class="dropdown-item" href="{% url 'account_logout' %}?next={{ request.path }}">注销登录</a>
+                    {% endif %}
+                </div>
+            </div>
+            <button class="navbar-toggler navbar-right" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
         </div>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+
     </nav>
 </div>
-<!--登入弹出框-->
-<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true";>
-    <div class="modal-dialog model-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-center" id="loginLabel">
-                    登入
-                </h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body">
-                <!--登入表单-->
-                <form class="form-horizontal" role="form" method="post" action="{% url 'users:login' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="firstname" class="col-sm-3 control-label">用户名</label>
-                        <input type="text" class="form-control" id="firstname" placeholder="请输入用户名！" name="username">
-                    </div>
-                    <div class="form-group">
-                        <label for="lastname" class="col-sm-3 control-label">密码</label>
-                        <input type="password" class="form-control" id="lastname" placeholder="请输入您的密码" name="password">
-                    </div>
-                    <div class="form-group clearfix">
-                        <label for="lastname" class="control-labe">验证码</label>
-                        <input id="valid-inp" name="valifycode" class="form-control float-left" type="text" placeholder="请输入验证码" autocomplete="off">
-                        <img id='verifycode' src="/verifycode/?1" alt="CheckCode" style="padding-left: 10px;" />
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary" style="padding: 10px 30px;">登录</button>
-                        <a class="col-lg-offset-3" href="#">忘记密码</a>
-                    </div>
-                </form>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal -->
+{% if messages %}
+<div class="messages alert-success">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    {% for message in messages %}
+    <div {% if message.tags %} class="text-{{ message.tags }}"{% endif %}>{{ message }}</div>
+    {% endfor %}
 </div>
-<!--注册弹出框-->
-<div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true";>
-    <div class="modal-dialog model-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="registerLabel">注册</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            </div>
-            <div class="modal-body">
-                <!--注册表单-->
-                <form class="form-horizontal" id="register_form" role="form"  method="post" action="{% url 'users:register' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="registername" class="col-sm-3 control-label">用户名</label>
-                        <input type="text" class="form-control" id="registername" placeholder="请输入用户名" name="username" value="">
-                    </div>
-                    <div class="form-group">
-                        <label for="lastname" class="control-label">邮箱</label>
-                        <input type="email" class="form-control" id="registeremail" placeholder="请输入您的邮箱" name="email" value="">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerpwd1" class="control-label">密码</label>
-                        <input type="password" class="form-control" id="registerpwd1" placeholder="请输入您的密码" name="password1" value="">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerpwd2" class="control-label">确认密码</label>
-                        <input type="password" class="form-control" id="registerpwd2" placeholder="请确认您的密码" name="password2" value="">
-                    </div>
-                    <input type="hidden" name="next" value="{{ next }}"/>
-                    <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-6">
-                            <span id="error" style="display: none;color: red;font-size: 16px;">错误提示:</span>
-                        </div>
-                        <div class="">
-                            <span style="color: red;font-size: 16px;">
-                                {% for field in form %}
-                                    {{ field.errors }}
-                                {% endfor %}
-                            </span>
-                        </div>
-                        <div>
-                            <button type="submit" class="btn btn-primary" id="register_sub" title="警告！"
-                                    data-container="body" data-toggle="popover" data-placement="left" data-content="你的输入不合法！无法提交！">注册</button>
-                            <div class="popover-options" style="display: inline;">
-                                <a href="#" title="提示格式："  data-container="body" data-toggle="popover" data-placement="right"
-                                    style="font-size: 14px;" data-content="
-                                        1.用户名：150个字符或者更少。包含字母，数字和仅有的@/./+/-/_符号。</br>
-                                        2.你的密码不能与其他个人信息太相似</br>
-                                        3.你的密码必须包含至少 8 个字符</br>
-                                        4.你的密码不能是大家都爱用的常见密码</br>
-                                        5.你的密码不能全部为数字
-                                ">提示</a>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+{% endif %}
+
 {% block main %}
 {% endblock main %}
 
-<div class="jumbotron" style="margin:0px 0px 5px 0px;">
-
-</div>
 </body>
 </html>

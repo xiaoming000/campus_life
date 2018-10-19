@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="container">
+    <div class="page-header edit_header">
+        <h1>消息</h1>
+    </div>
+
+    <div class="row edit">
+        <div class="col-md-3 edit_nav border">
+            <ul class="nav flex-column nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link {% if '/message/' in request.path %} active {% endif %}" href="{% url 'users:message' %}">全部消息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/message_no_read/' in request.path %} active {% endif %}" href="{% url 'users:message_no_read' %}">未读消息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/message_read/' in request.path %} active {% endif %}" href="{% url 'users:message_read' %}">已读消息</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-9 edit_profile">
+            <div class="card bg-light">
+                <h3 class="card-header">
+                    {% if '/message/' in request.path %}全部消息
+                    {% elif '/message_no_read/' in request.path %}未读消息
+                    {% elif '/message_read/' in request.path %}已读消息{% endif %}
+                </h3>
+                <div class="card-body">
+                    <ul class="list-group">
+                    {% for message in message %}
+                        <li class="list-group-item {% if message.is_read %} text-black-50 {% endif %}">
+                            <a class="text-info {% if message.is_read %} text-black-50 {% endif %}" href="{% url 'users:info' message.from_user.id %}">{{ message.from_user }}</a>
+                            {% if message.category.name == 'comments' %}评论了你：{% elif message.category.name == 'praise' %}赞了你：
+                            {% elif message.category.name == 'collected' %}收藏了你的文章：{% elif message.category.name == 'followed' %}关注了你{% endif %}
+                            <div>
+                                {{ message.content }}
+                            </div>
+                            {% if message.msgpost %}
+                            <div>
+                               来自于： <a class="text-success {% if message.is_read %} text-black-50 {% endif %}" href="{{ message.msgpost.post.get_absolute_url }}">{{ message.msgpost }}</a>
+                            </div>
+                            {% endif %}
+                        </li>
+                        {% empty %}
+                        你还有任何消息哦！
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main %}

@@ -1,15 +1,15 @@
 from django.contrib import admin
-from .models import  Post, PostComent, PostReply
+from .models import Post, PostComment, PostReply
 
 
 class PostCommentAdmin(admin.ModelAdmin):
     list_display = ['content', 'user']
 
 
-class PostReplyAdmin(admin.ModelAdmin):
-    list_display = ['content', 'user', 'created_time']
+class ReplyAdmin(admin.ModelAdmin):
+    list_display = ['text', 'user', 'created_time']
 
 
 admin.site.register(Post)
-admin.site.register(PostComent, PostCommentAdmin)
-admin.site.register(PostReply, PostReplyAdmin)
+admin.site.register(PostComment, PostCommentAdmin)
+admin.site.register(PostReply, ReplyAdmin)

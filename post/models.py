@@ -6,16 +6,17 @@ from users.models import User, Tag, Category
 
 
 class Post(models.Model):
+
     title = models.CharField(max_length=40)
     content = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now_add=True)
     delete = models.SmallIntegerField(default=0)
     excerpt = models.CharField(max_length=300, blank=True)
-    anonym = models.SmallIntegerField(default=0)
+    anonymous = models.SmallIntegerField(default=0)
     views = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag, blank=True)
-    auther = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -26,10 +27,7 @@ class Post(models.Model):
         self.save(update_fields=['views'])
 
     def get_absolute_url(self):
-        # if self.category == 1:
         return reverse('post:detail', kwargs={'pk': self.pk})
-        # else:
-        #     return reverse('post:study_detail', kwargs={'pk': self.pk})
 
     def save(self, *args, **kwargs):
         # 如果没有填写摘要
@@ -51,7 +49,7 @@ class Post(models.Model):
         ordering = ['-created_time']
 
 
-class PostComent(models.Model):
+class PostComment(models.Model):
     content = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True)
     delete = models.SmallIntegerField(default=0)
@@ -59,19 +57,22 @@ class PostComent(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.content[0:20]
+        return self.content[:20]
 
 
 class PostReply(models.Model):
-    content = models.TextField()
+
+    text = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True)
     delete = models.SmallIntegerField(default=0)
     reply_type = models.SmallIntegerField(default=0)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post_comment = models.ForeignKey(PostComent, on_delete=models.CASCADE)
-    reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.ForeignKey(PostComment, on_delete=models.CASCADE)
+    comment_reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return self.content[0:20]
+        return self.text[0:20]
+
 
 

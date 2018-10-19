@@ -5,8 +5,13 @@ register = template.Library()
 
 
 @register.simple_tag
-def get_recent_post(auther,):
-    return Post.objects.filter(auther=auther).order_by('-created_time')[:5]
+def get_recent_post(author, num=5):
+    return Post.objects.filter(author=author).order_by('-created_time')[:num]
+
+
+@register.simple_tag
+def get_recent_post_all(author):
+    return Post.objects.filter(author=author).order_by('-created_time')
 
 
 @register.simple_tag
