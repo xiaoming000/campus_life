@@ -1,13 +1,18 @@
+import json
 from datetime import datetime
 import markdown
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.html import strip_tags
 from django.views import View
 from django.views.generic import DetailView
 from markdown.extensions.toc import TocExtension
 from django.utils.text import slugify
-# from users.forms import RegisterForm
 from .forms import NewsCommentForm, NewsReplyForm
 from .models import News, NewsComment, Reply
+from users.models import MsgCategory, MailBox, Message, EmailNotification
+from users.email import CreateMessage
 
 
 class NewsView(View):
@@ -73,6 +78,19 @@ def news_comment(request, news_pk):
             comment.news = news
             comment.user = user
             comment.save()
+
+            content = request.POST['content']
+            md = markdown.Markdown(extensions=[
+                'markdown.extensions.extra',
+                'markdown.extensions.codehilite',
+            ])
+            content =md.convert(content)
+            category = MsgCategory.objects.get(name='comment')
+            news_url = request.build_absolute_uri(news.get_absolute_url())
+            # return HttpResponse(news_url)
+            msg = CreateMessage(from_user=request.user, to_user=news.auther, category=category, content=content, news_url=news_url)
+            msg.create_email()
+
             return redirect(news)
         else:
             comment_list = news.newscomment_set.all()
@@ -108,3 +126,36 @@ def news_reply(request, news_pk):
             }
         return render(request, 'news/detail.html', context=context)
     return redirect(news)
+
+
+@login_required()
+def del_comment(request):
+    if request.method == 'POST':
+        comment_id = request.POST.get('comment_id', '')
+        response = ""
+        try:
+            comment = NewsComment.objects.get(pk=comment_id)
+            if comment.user == request.user or request.user.is_staff:
+                NewsComment.objects.filter(pk=comment_id).delete()
+                response = "删除成功！"
+        except:
+            response = "删除失败！"
+
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+# 删除操作
+@login_required()
+def del_reply(request):
+    if request.method == 'POST':
+        reply_id = request.POST.get('reply_id', '')
+        response = ""
+        try:
+            reply = Reply.objects.get(pk=reply_id)
+            if reply.user == request.user or request.user.is_staff:
+                Reply.objects.filter(pk=reply_id).delete()
+                response = "删除成功！"
+        except:
+            response = "删除失败！"
+
+        return HttpResponse(json.dumps(response), content_type="application/json")

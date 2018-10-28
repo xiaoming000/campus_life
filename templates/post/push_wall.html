@@ -1,21 +1,20 @@
 {% extends 'base.html' %}
 {% block head %}
 
-<script>
-    tinyMCE.init({
-            'height': 400,
-            'mode':'textareas',
-            'theme':'modern',
-        });
-</script>
-{% endblock head %}
+<script src="/static/js/tinymce/textarea.js"></script>
+<style>
+    .mce-window {
+    transform: initial !important;
+    }
+</style>
 
+{% endblock head %}
 {% block main %}
 <div class="container">
     <div class="row clearfix" style="">
         <div class="col-lg-12 col-sm-12">
             <div style="margin-bottom: 50px;">
-                <form role="form" method="post" action="{% url 'post:push_wall' %}">
+                <form id="my_form" role="form" method="post" action="{% url 'post:push_wall' %}">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ next }}"/>
                     <input type="hidden" name="category" value="{{ category }}"/>

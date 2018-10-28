@@ -1,13 +1,24 @@
+import json
+
 import markdown
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.views import View
 from django.views.generic import DetailView
 from markdown.extensions.toc import TocExtension
 from django.utils.text import slugify
 from .forms import PostCommentForm, PostForm, PostReplyForm
-from .models import Post, PostComment, PostReply
+from .models import Post, PostComment, PostReply, PostImg
 from users.models import Category, Tag
 from datetime import datetime
+
+
+from django.views.decorators.csrf import csrf_exempt
+import json
+import time
+from PIL import Image
+from django.conf import settings
+from django.http import HttpResponse
 
 
 class PostView(View):
@@ -146,6 +157,40 @@ def post_reply(request, post_pk):
     return redirect(post)
 
 
+# 删除评论
+@login_required()
+def del_comment(request):
+    if request.method == 'POST':
+        comment_id = request.POST.get('comment_id', '')
+        response = ""
+        try:
+            comment = PostComment.objects.get(pk=comment_id)
+            if comment.user == request.user or comment.post.author == request.user or request.user.is_staff:
+                PostComment.objects.filter(pk=comment_id).delete()
+                response = "删除成功！"
+        except:
+            response = "删除失败！"
+
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+# 删除操作
+@login_required()
+def del_reply(request):
+    if request.method == 'POST':
+        reply_id = request.POST.get('reply_id', '')
+        response = ""
+        try:
+            reply = PostReply.objects.get(pk=reply_id)
+            if reply.user == request.user or reply.comment.post.author == request.user or request.user.is_staff:
+                PostReply.objects.filter(pk=reply_id).delete()
+                response = "删除成功！"
+        except:
+            response = "删除失败！"
+
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
 def push_wall(request):
     redirect_to = request.POST.get('next', request.GET.get('next', ''))
     category_id = request.POST.get('category', request.GET.get('category', ''))
@@ -189,4 +234,30 @@ def push_wall(request):
     return render(request, 'post/push_wall.html', context=context)
 
 
+static_base = 'http://127.0.0.1:8000'
+static_url = static_base + settings.MEDIA_URL  # 上传文件展示路径前缀
+
+
+# 上传图片 POST
+@csrf_exempt
+def upload_img(request):
+    file = request.FILES['file']
+    data = {
+        'error': True,
+        'path': '',
+    }
+    if file:
+        timenow = int(time.time()*1000)
+        timenow = str(timenow)
+        try:
+            img = Image.open(file)
+            img.save(settings.MEDIA_ROOT + "content/" + timenow + str(file))
+            # post_img = PostImg()
+        except Exception as e:
+            print(e)
+            return HttpResponse(json.dumps(data), content_type="application/json")
+        imgUrl = static_url + 'content/' + timenow + str(file)
+        data['error'] = False
+        data['path'] = imgUrl
+    return HttpResponse(json.dumps(data), content_type="application/json")
 

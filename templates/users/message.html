@@ -22,20 +22,33 @@
         </div>
         <div class="col-md-9 edit_profile">
             <div class="card bg-light">
-                <h3 class="card-header">
-                    {% if '/message/' in request.path %}全部消息
-                    {% elif '/message_no_read/' in request.path %}未读消息
-                    {% elif '/message_read/' in request.path %}已读消息{% endif %}
-                </h3>
+                <div class="card-header">
+                    <h3 class="float-left">
+                        {% if '/message/' in request.path %}全部消息
+                        {% elif '/message_no_read/' in request.path %}未读消息
+                        {% elif '/message_read/' in request.path %}已读消息{% endif %}
+                    </h3>
+                    <div class="float-right">
+                        <a class="inline btn btn-light btn-sm" href="{% url 'users:edit_notification' user.id %}">
+                            <i class="fa fa-cog" aria-hidden="true"></i> Settings
+                        </a>
+                        <form method="post" action="{% url 'users:message_read_edit' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-light btn-sm">
+                                <i class="fa fa-check" aria-hidden="true"></i> Read all
+                            </button>
+                        </form>
+                    </div>
+                </div>
                 <div class="card-body">
                     <ul class="list-group">
                     {% for message in message %}
                         <li class="list-group-item {% if message.is_read %} text-black-50 {% endif %}">
                             <a class="text-info {% if message.is_read %} text-black-50 {% endif %}" href="{% url 'users:info' message.from_user.id %}">{{ message.from_user }}</a>
-                            {% if message.category.name == 'comments' %}评论了你：{% elif message.category.name == 'praise' %}赞了你：
+                            {% if message.category.name == 'comment' %}评论了你：{% elif message.category.name == 'praise' %}赞了你：
                             {% elif message.category.name == 'collected' %}收藏了你的文章：{% elif message.category.name == 'followed' %}关注了你{% endif %}
                             <div>
-                                {{ message.content }}
+                                {{ message.content | safe }}
                             </div>
                             {% if message.msgpost %}
                             <div>

@@ -15,14 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from post.views import upload_img
 
 urlpatterns = [
+    path('upload_img/', upload_img),  # 后台富文本框上传图片
     path('admin/', admin.site.urls),
-    path(r'', include('users.urls')),
-    path(r'news/', include('news.urls')),
-    path(r'post/', include('post.urls')),
-    path(r'graduate/', include('graduate.urls')),
-    path(r'tinymce/', include('tinymce.urls')),
+    path('', include('users.urls')),
+    path('news/', include('news.urls')),
+    path('post/', include('post.urls')),
+    path('graduate/', include('graduate.urls')),
+    path('tinymce/', include('tinymce.urls')),
     path('accounts/', include('allauth.urls')),
-    path(r'search/', include('haystack.urls')),
-]
+    path('search/', include('haystack.urls')),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

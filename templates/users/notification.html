@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+
+{% block main %}
+<div class="container">
+    <div class="page-header edit_header">
+        <h1>设置</h1>
+    </div>
+
+    <div class="row edit">
+        <div class="col-md-3 border edit_nav">
+            {% for key,value in request.session.items %}
+                {% if key == 'user_it' %}
+                {% include 'users/_edit_nav.html' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="col-md-9 edit_profile">
+            <div class="card bg-light">
+                <h3 class="card-header">修改邮箱通知</h3>
+                <div class="card-body">
+                    <form method="post" action="{% url 'users:edit_notification' user_it.id %}" class="form" role="form">
+                        {% csrf_token %}
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" name="praise" value="{{ email_notification.praise }}">点赞通知
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" name="followed" value="{{ email_notification.followed }}">被关注通知
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" name="comment" value="{{ email_notification.comment }}">评论通知
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" name="collected" value="{{ email_notification.collected }}">文章收藏通知
+                          </label>
+                        </div>
+                        <div>
+                            <input class="btn btn-secondary" id="submit" name="submit" type="submit" value="提交">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+       $('.form-check-input[value=1]').attr("checked",'true');
+    });
+</script>
+{% endblock main %}
+

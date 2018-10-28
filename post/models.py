@@ -49,6 +49,12 @@ class Post(models.Model):
         ordering = ['-created_time']
 
 
+class PostImg(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    filename = models.CharField(max_length=200, blank=True, null=True)
+    url = models.ImageField(upload_to='./media')
+
+
 class PostComment(models.Model):
     content = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True)
@@ -73,6 +79,8 @@ class PostReply(models.Model):
 
     def __str__(self):
         return self.text[0:20]
+
+
 
 
 

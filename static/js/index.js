@@ -66,30 +66,63 @@ $(function () {
 
 
     // 删除
-    // 评论删除
-    $(".reply_comment_del").click(function () {
+    // 新闻评论删除
+    $(".news .reply_comment_del").click(function () {
         if(confirm("确定要删除吗？")){
-            $.post('/del_comment/',
+            $.post('/news/del_comment/',
                 {
                     csrfmiddlewaretoken: $(this).attr("data-csrf"),
                     comment_id: $(this).attr("data-comment-id")
                 },
                 function (data) {
-                    console.log(data);
+                    // console.log(data);
+                    alert(data)
                 }
             );
         }
     });
-    // 回复删除
-    $(".reply_r_del").click(function () {
+    // 新闻回复删除
+    $(".news .reply_r_del").click(function () {
         if(confirm("确定要删除吗？")){
-            $.post('/del_reply/',
+            $.post('/news/del_reply/',
                 {
                     csrfmiddlewaretoken: $(this).attr("data-csrf"),
                     reply_id: $(this).attr("data-reply-id")
                 },
                 function (data) {
-                    console.log(data);
+                    // console.log(data);
+                    alert(data)
+                }
+            );
+        }
+    });
+
+    // 文章评论删除
+    $(".post .reply_comment_del").click(function () {
+        if(confirm("确定要删除吗？")){
+            $.post('/post/del_comment/',
+                {
+                    csrfmiddlewaretoken: $(this).attr("data-csrf"),
+                    comment_id: $(this).attr("data-comment-id")
+                },
+                function (data) {
+                    // console.log(data);
+                    alert(data)
+                }
+            );
+        }
+    });
+    // 文章回复删除
+    $(".post .reply_r_del").click(function () {
+        if(confirm("确定要删除吗？")){
+            $.post('/post/del_reply/',
+                {
+                    csrfmiddlewaretoken: $(this).attr("data-csrf"),
+                    reply_id: $(this).attr("data-reply-id")
+                },
+                function (data) {
+                    // console.log(data);
+                    alert(data)
                 }
             );
         }

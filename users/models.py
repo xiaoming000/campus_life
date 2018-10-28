@@ -34,9 +34,13 @@ class Message(models.Model):
     content = models.TextField(blank=True)       # 消息内容
     is_read = models.SmallIntegerField(default=0)   # 是否已读
     is_delete = models.SmallIntegerField(default=0)     # 是否删除
+    created_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.from_user.username
+
+    class Meta:
+        ordering = ['-created_time']
 
 
 class MsgPost(models.Model):
@@ -49,12 +53,31 @@ class MsgPost(models.Model):
         return self.post.title
 
 
+class MailBox(models.Model):
+    message = models.OneToOneField(Message, primary_key=True, on_delete=models.CASCADE)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.content[0:20]
+
+
 class Follow(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')   # 关注者
     followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')   # 被关注者
 
     class Meta:
         unique_together = (('follower', 'followed'), )
+
+
+class EmailNotification(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    praise = models.SmallIntegerField(default=0)
+    followed = models.SmallIntegerField(default=0)
+    comment = models.SmallIntegerField(default=1)
+    collected = models.SmallIntegerField(default=0)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Tag(models.Model):

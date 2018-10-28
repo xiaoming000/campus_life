@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, reverse, HttpResponse, HttpResponseRedirect, get_object_or_404
 from django.http import JsonResponse, Http404
 from .forms import EditProForm, EditUserForm
-from .models import User, Profile, Follow, Message
+from .models import User, Profile, Follow, Message, EmailNotification
 from django.contrib.auth import authenticate, login, logout
 from django.views import View, generic
 from django.contrib.auth.decorators import login_required
@@ -22,28 +22,6 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
-class EditBaseView(LoginRequiredMixin, generic.DetailView):
-    model = User
-    template_name = 'users/edit_base.html'
-    context_object_name = 'user_it'
-
-    def get(self, request, *args, **kwargs):
-        response = super(EditBaseView, self).get(request, *args, **kwargs)
-        user_it = super(EditBaseView, self).get_object(queryset=None)
-        # redirect(reverse('users:edit', kwargs={'pk': user_it.id}))
-        # redirect('edit/' + kwargs['pk'] + '/')
-        # return  HttpResponse(kwargs['pk'])
-        return response
-
-    def get_context_data(self, **kwargs):
-        context = super(EditBaseView, self).get_context_data(**kwargs)
-        user_it = super(EditBaseView, self).get_object(queryset=None)
-        context.update({
-            'user_it': user_it,
-        })
-        return context
-
-
 def edit_nav(request):
     if request.session['user_it']:
         user_it = request.session['user_it']
@@ -59,6 +37,10 @@ class InfoView(LoginRequiredMixin, View):
         user_it = get_object_or_404(User, pk=pk)
         # user_pro = get_object_or_404(Profile, pk=pk)
         user_pro = Profile.objects.filter(pk=pk)
+        if not user_pro:
+            user_pro = Profile()
+            user_pro.user_pro = user_it
+            user_pro.save()
         request.session['user_it'] = pk
         follower = Follow.objects.filter(follower=pk)
 
@@ -139,6 +121,44 @@ class EditActivateView(LoginRequiredMixin, View):
         return redirect('/info/' + user_pk + '/')
 
 
+class EditNotificationView(LoginRequiredMixin, View):
+
+    def get(self, request, user_pk):
+        user_it = get_object_or_404(User, pk=user_pk)
+        try:
+            email_notification = EmailNotification.objects.get(user=user_it)
+        except EmailNotification.DoesNotExist:
+            email_notification = EmailNotification()
+            email_notification.user = user_it
+            email_notification.save()
+        context = {
+            'user_it': user_it,
+            'email_notification': email_notification
+        }
+        return render(request, 'users/notification.html', context=context)
+
+    def post(self, request, user_pk):
+        email_notification = EmailNotification.objects.get(pk=user_pk)
+        praise = request.POST.get('praise', '')
+        followed = request.POST.get('followed', '')
+        comment = request.POST.get('comment', '')
+        collected = request.POST.get('collected', '')
+        praise = 1 if praise else 0
+        comment = 1 if comment else 0
+        followed = 1 if followed else 0
+        collected = 1 if collected else 0
+        try:
+            email_notification.praise = praise
+            email_notification.comment = comment
+            email_notification.followed = followed
+            email_notification.collected = collected
+            email_notification.save()
+            messages.success(request, '邮箱通知修改成功！')
+        except:
+            raise Http404
+        return redirect('/info/' + user_pk + '/')
+
+
 class EditUserDel(LoginRequiredMixin, View):
     def get(self, request, user_pk):
         user_it = get_object_or_404(User, pk=user_pk)
@@ -158,7 +178,7 @@ class EditUserDel(LoginRequiredMixin, View):
             try:
                 user_del.is_active = 0
                 user_del.save()
-                messages.success(request, '隐私设置修改成功！')
+                messages.success(request, '账户删除成功！')
             except:
                 raise Http404
         else:
@@ -185,3 +205,13 @@ class MessageReadView(MessageView):
 
     def get_queryset(self):
         return super(MessageReadView, self).get_queryset().filter(is_delete=0, is_read=1)
+
+
+@login_required()
+def message_read_edit(request):
+    if request.method == 'POST':
+        message = Message.objects.filter(to_user=request.user, is_read=0)
+        for msg in message:
+            msg.is_read = 1
+            msg.save()
+        return redirect(reverse('users:message'))
