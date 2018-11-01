@@ -1,15 +1,52 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load post_tags %}
+
 {% block head %}
+<script>
+    $(function () {
+        var show_img = 0;
+        $('#img-btn').click(function () {
+            if (show_img == 0){
+                show_img = 1;
+                $('.img_hidden').css('display', 'inline');
+                $(this).text("收起");
+            }
+            else if (show_img == 1){
+                show_img = 0;
+                $('.img_hidden').css('display', 'none');
+                $(this).text("展开全文");
+            }
+        });
+        var show_content = 0;
+        $('.content-btn').click(function () {
+            if (show_content == 0){
+                show_content = 1;
+                $(this).prev().html($(this).prev().attr('data-content-all'));
+                $('.post_content img').css('display', 'none')
+                $(this).text("收起");
+            }
+            else if (show_content == 1){
+                show_content = 0;
+                $(this).prev().html($(this).prev().attr('data-content'));
+                $(this).text("展开全文");
+            }
+        });
+
+        // $('.post_content img').css('display', 'none')
+    });
+</script>
 {% endblock head %}
 
 {% block main %}
-<div class="container">
+<div class="container post_list">
     {% for post in post_list %}
     <div class="row"  style="margin: 10px 0px">
         <!--发文人头像和时间信息-->
         <div class="col-lg-offset-1 col-xl-2 col-sm-12 push_info">
-            <img class="img-fluid rounded-circle float-left" src="{% static 'img/touxiang1.jpg' %}" alt="Cinque Terre" style="width: 60px; height: 60px;">
+            <img class="img-fluid rounded-circle float-left"
+                 src="{% if post.author.socialaccount_set.all.0.get_avatar_url %} {{post.author.socialaccount_set.all.0.get_avatar_url}} {% elif post.author.tx_url %} {{post.author.tx_url}} {% else %} {% static 'img/touxiang1.jpg' %} {% endif %} "
+                 alt="Cinque Terre" style="width: 60px; height: 60px;">
             <div class="float-left info_time">{{ post.created_time| timesince }} 前</div>
         </div>
         <!--文章内容主体-->
@@ -17,9 +54,35 @@
             <div class="card">
                 <div class="card-body">
                     <div style="text-align: center;"><a href="{{ post.get_absolute_url }}"><h4>{{ post.title }}</h4></a></div>
-                    <p>
-                        {{ post.excerpt }}
-                    </p>
+                    <div class="article_info">
+                        <span><i class="fa fa-leaf" style="padding-right: 2px;"></i>{{ post.category.name }}</span>
+                        <span><i class="fa fa-clock-o"></i><time datetime="{{ post.created_time }}">{{ post.created_time | timesince }}前</time></span>
+                        <span><i class="fa fa-comment"></i>{{ post.postcomment_set.count }} 评论</span>
+                        <span><i class="fa fa-eye"></i>{{ post.views }} 阅读</span>
+                    </div>
+                    <div class="post_content" data-content-all="{{ post.content_all }}" data-content="{{post.content | truncatechars_html:150 }}">
+                        {{post.content|safe | truncatechars_html:150 }}
+                    </div>
+                    {% if post.content != post.content_all %}
+                    <div class="text-info content-btn" style="cursor: pointer;">展开全文</div>
+                    {% endif %}
+                    <div class="row">
+                        {% get_post_img post as post_img %}
+                        {% if post_img %}
+                            {% for images in post_img %}
+                                {% if forloop.counter < 7 %}
+                                <div class="col-md-4 col-sm-4 img_show" style="display: inline;height: 200px;overflow: hidden;">
+                                    <img class="" src="{{ images.url }}" style="padding: 5px;">
+                                </div>
+                                {% else %}
+                                <div class="col-md-4 col-sm-4 img_hidden" style="display: none;height: 200px;overflow: hidden;">
+                                    <img class="" src="{{ images.url }}" style="padding: 5px;">
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        <div class="text-info" id="img-btn" style="cursor: pointer;padding: 10px 20px;">展开全文</div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

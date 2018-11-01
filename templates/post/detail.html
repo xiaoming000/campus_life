@@ -8,6 +8,7 @@
             'theme':'modern',
         });
     $(function () {
+        $('img').addClass('img-fluid');
     });
 
 </script>
@@ -18,7 +19,6 @@
         <div class="col-lg-9">
             <h2 style="text-align: center;">{{post.title}}</h2>
             <p>{{post.content | safe}}</p>
-
             <div>
                 <div>
                     <form method="post" action="{% url 'post:post_comment' post.pk %}">
@@ -148,9 +148,11 @@
                 </li>
                 <li class="list-group-item">
                     <h4>文章标签</h4>
-                    {% for tag in tags_list %}
-                    <button type="button" class="btn btn-default">{{tag.name}}</button>
-                    {% endfor %}
+                    {% if tags_list %}
+                        {% for tag in tags_list %}
+                        <button type="button" class="btn btn-default">{{tag.name}}</button>
+                        {% endfor %}
+                    {% endif %}
                 </li>
             </ul>
         </div>

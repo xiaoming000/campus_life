@@ -1,53 +1,62 @@
 import json
-
+import time
 import markdown
+import re
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.shortcuts import get_current_site
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.views import View
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from markdown.extensions.toc import TocExtension
 from django.utils.text import slugify
 from .forms import PostCommentForm, PostForm, PostReplyForm
 from .models import Post, PostComment, PostReply, PostImg
 from users.models import Category, Tag
-from datetime import datetime
-
-
 from django.views.decorators.csrf import csrf_exempt
-import json
-import time
 from PIL import Image
 from django.conf import settings
-from django.http import HttpResponse
 
 
-class PostView(View):
-    def get(self, request):
-        redirect_to = request.POST.get('next', request.GET.get('next', ''))
-        post_list = Post.objects.filter(category=1)
-        now_time = datetime.now()
-        return render(request, 'post/post.html', {
-            'post_list': post_list,
-            'next': redirect_to,
-            'fail': 0,
-            'nav': 3,
+class PostView(ListView):
+    model = Post
+    template_name = 'post/post.html'
+    context_object_name = 'post_list'
+
+    def get_queryset(self):
+        post_list = super(PostView, self).get_queryset().filter(category=1)
+        for post in post_list:
+            md = markdown.Markdown(extensions=[
+                'markdown.extensions.extra',
+                'markdown.extensions.codehilite',
+                'markdown.extensions.toc',
+                TocExtension(slugify=slugify),
+            ])
+            post.content = md.convert(post.content)
+            # 将文章中的img去掉
+            images = r'(<img){1}(.)*?(/>){1}'
+            post.content = re.sub(images, '', post.content)
+            # # 取出文章的前6行显示在列表中
+            post_list_all = post.content.split(r'<br />')
+            post_part = '<br />'.join(post_list_all[0:5])
+            post.content = post_part
+            post.content_all = '<br />'.join(post_list_all)
+        return post_list
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(PostView, self).get_context_data(**kwargs)
+        context.update({
             'htitle': '万能墙',
-            'now_time': now_time
         })
+        return context
 
 
 class StudyView(View):
     def get(self, request):
-        redirect_to = request.POST.get('next', request.GET.get('next', ''))
         study_list = Post.objects.filter(category=2)
-        now_time = datetime.now()
         return render(request, 'post/study.html', {
             'study_list': study_list,
-            'next': redirect_to,
-            'fail': 0,
-            'nav': 4,
             'htitle': '学习交流',
-            'now_time': now_time
         })
 
 
@@ -81,25 +90,24 @@ class PostDetailView(DetailView):
         reply_form = PostReplyForm()
         comment_list = post.postcomment_set.all()
         reply_list = []
-        if post.category.pk == 1:
-            title = '万能墙'
-            nav = 3
-        else:
-            title = '学习交流'
-            nav = 4
         context.update({
             'tags_list': tags_list,
-            'nav': nav,
             'form': form,
             'reply_form': reply_form,
             'comment_list': comment_list,
             'reply_list': reply_list,
-            'htitle': title + '-' + post.title,
+            'htitle': post.category.name + '-' + post.title,
         })
         return context
 
 
-# 可能要重构
+class WallView(PostDetailView):
+    model = Post
+    template_name = 'post/wall.html'
+    content_object_name = 'post'
+
+
+@login_required()
 def post_comment(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
     user = request.user
@@ -132,6 +140,7 @@ def post_comment(request, post_pk):
     return redirect(post)
 
 
+@login_required()
 def post_reply(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
     user = request.user
@@ -191,12 +200,15 @@ def del_reply(request):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-def push_wall(request):
-    redirect_to = request.POST.get('next', request.GET.get('next', ''))
+def push(request):
+    # redirect_to = request.POST.get('next', request.GET.get('next', ''))
     category_id = request.POST.get('category', request.GET.get('category', ''))
     if not category_id:
         category_id = 1
     if request.method == 'POST':
+        post_img = request.POST.get('post_img', '')
+        post_img_list = post_img.split()
+
         form = PostForm(request.POST)
         category = Category.objects.filter(pk=category_id)
         tags_str = request.POST['tags_str']
@@ -208,56 +220,67 @@ def push_wall(request):
                 tags = tags_data[0]
                 tags_push.append(tags)
             else:
-                tags = Tag()
-                tags.name = tag
-                tags.save()
-                tags_push.append(tags)
-        # return HttpResponse(request.POST['next'])
+                try:
+                    tags = Tag()
+                    tags.name = tag
+                    tags.save()
+                    tags_push.append(tags)
+                except Exception as e:
+                    print(e)
+                    raise Http404
+
         if form.is_valid():
             post = form.save(commit=False)
             post.category = category[0]
             post.author = request.user
             post.save()
             post.tags.set(tags_push)
-            if redirect_to:
-                return redirect(redirect_to)
-            else:
-                return redirect('/')
+
+            try:
+                # 保存post图片地址
+                for img in post_img_list:
+                    post_img = PostImg()
+                    post_img.post = post
+                    post_img.filename = img
+                    post_img.url = img
+                    post_img.save()
+            except Exception as e:
+                print(e)
+                raise Http404
+            # 保存文章
+
+            return redirect(post)
     else:
-        # return HttpResponse(redirect_to)
         form = PostForm()
         context = {
             'form': form,
-            'next': redirect_to,
             'category': category_id
         }
-    return render(request, 'post/push_wall.html', context=context)
-
-
-static_base = 'http://127.0.0.1:8000'
-static_url = static_base + settings.MEDIA_URL  # 上传文件展示路径前缀
+        return render(request, 'post/push.html', context=context)
 
 
 # 上传图片 POST
 @csrf_exempt
 def upload_img(request):
+    static_base = str(get_current_site(request).domain)[0:-1]
+    static_url = static_base + settings.MEDIA_URL  # 上传文件展示路径前缀
+
     file = request.FILES['file']
     data = {
         'error': True,
         'path': '',
     }
     if file:
-        timenow = int(time.time()*1000)
-        timenow = str(timenow)
+        time_now = int(time.time()*1000)
+        time_now = str(time_now)
+        img_url = static_url + 'content/' + time_now + str(file)
         try:
             img = Image.open(file)
-            img.save(settings.MEDIA_ROOT + "content/" + timenow + str(file))
-            # post_img = PostImg()
+            img.save(settings.MEDIA_ROOT + "content/" + time_now + str(file))
         except Exception as e:
             print(e)
             return HttpResponse(json.dumps(data), content_type="application/json")
-        imgUrl = static_url + 'content/' + timenow + str(file)
         data['error'] = False
-        data['path'] = imgUrl
+        data['path'] = img_url
     return HttpResponse(json.dumps(data), content_type="application/json")
 

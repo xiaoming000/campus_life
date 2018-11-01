@@ -27,7 +27,10 @@ class Post(models.Model):
         self.save(update_fields=['views'])
 
     def get_absolute_url(self):
-        return reverse('post:detail', kwargs={'pk': self.pk})
+        if self.category.name == '学习交流':
+            return reverse('post:detail', kwargs={'pk': self.pk})
+        elif self.category.name == '万能墙':
+            return reverse('post:wall_detail', kwargs={'pk': self.pk})
 
     def save(self, *args, **kwargs):
         # 如果没有填写摘要
@@ -53,6 +56,9 @@ class PostImg(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     filename = models.CharField(max_length=200, blank=True, null=True)
     url = models.ImageField(upload_to='./media')
+
+    def __str__(self):
+        return self.post.title
 
 
 class PostComment(models.Model):

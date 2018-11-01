@@ -16,10 +16,13 @@ tinymce.init({
     ],
     toolbar: "undo redo | imageupload link | bold italic | styleselect fontselect fontsizeselect | bullist numlist outdent indent | alignleft aligncenter alignright alignjustify | print preview media | forecolor backcolor emoticons",
     content_css: [
-    // '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
-        '//www.tinymce.com/css/codepen.min.css',
         '/static/js/tinymce/skins/lightgray/content.min.css'
     ],
     imageupload_url: '/upload_img/',
     language:'zh_CN'
 });
+
+// $(function(){
+//     $('.mce-window').css('transform', 'rotate(7deg)');
+//     alert($('.mce-window').css('transform'));
+// });

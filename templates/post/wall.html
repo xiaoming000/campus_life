@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load post_tags %}
+{% block head %}
+    <script>
+        tinyMCE.init({
+                'mode':'textareas',
+                'theme':'modern',
+            });
+        $(function () {
+            $('img').addClass('img-fluid');
+            $('.detail_post_content img').css('display', 'none')
+            $('.img_sm').click(function () {
+                var forloop = $(this).attr('data-forloop');
+                $('.carousel-' + forloop).addClass('active').siblings().removeClass('active')
+            });
+        });
+
+    </script>
+{% endblock head %}
+
+{% block main %}
+<div class="container detail post">
+    <div class="row clearfix">
+        <div class="col-lg-9">
+            <h2 style="text-align: center;">{{post.title}}</h2>
+            <div class="detail_post_content">{{post.content | safe}}</div>
+            <div class="row d-flex flex-row">
+            {% for images in post.postimg_set.all %}
+                <div class="col-md-2 col-sm-3 border" style="display: inline;height: 100px;overflow: hidden;margin: 5px;">
+                    <img class="img_sm" data-forloop="{{ forloop.counter }}" src="{{ images.url }}" style="padding: 5px;">
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="">
+                <div id="demo" class="carousel slide" data-ride="carousel" style="margin: 20px 0px;">
+                    <!-- 轮播（Carousel）指标 -->
+                    <ol class="carousel-indicators">
+                        {% for images in post.postimg_set.all %}
+                        <li data-target="#myCarousel" data-slide-to="{{ forloop.counter }}" class="{% if forloop.counter == 1 %} active {% endif %}"></li>
+                        {% endfor %}
+                    </ol>
+                    <!-- 轮播（Carousel）项目 -->
+                    <div class="carousel-inner" style="background-color: #0b2e13;height: 600px;text-align: center;">
+                        {% for images in post.postimg_set.all %}
+                        <div class="carousel-item carousel-{{ forloop.counter }} {% if forloop.counter == 1 %} active {% endif %}" style="top: 20%;">
+                            <img src="{{ images.url }}" alt="First slide">
+                            <div class="carousel-caption">{{ forloop.counter }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!-- 轮播（Carousel）导航 -->
+                    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#demo" data-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="article-social">
+                <a class="like" href="#"><i class="fa fa-heart-o"></i>喜欢 (<span class="count">4</span>)</a>
+                <span class="or">or</span>
+                <a class="collect" href="#"><i class="fa fa-share-alt"></i>收藏 (<span class="count">0</span>)</a>
+            </div>
+
+            <div>
+                <div>
+                    <form method="post" action="{% url 'post:post_comment' post.pk %}">
+                        {% csrf_token %}
+                        <!--<input type="hidden"  >-->
+                        <textarea name='content'></textarea>
+                        <span style="color: red;">{{ form.content.errors }}</span>
+                        <input type="submit" value="提交">
+                    </form>
+                </div>
+                <div class="comment-list-panel" id="comment_list">
+                    <h4>评论列表，共 <span>{{ post.comment_set.count }}</span> 条评论</h4>
+                    <div>
+                        <ul class="comment_list list-unstyled">
+                            {% for comment in comment_list %}
+                            <hr>
+                            <li class="comment-item clearfix" id="comment-{{ comment.id }}">
+                                <div class="panel panel-default ">
+                                    <div class="panel-body comment_body">
+                                        <span class="nickname" style="color: #00a67c;">{{ comment.user.username }}</span>
+                                        <time class="submit-date">{{ comment.created_time }}</time>
+                                        <div class="text comment_text">
+                                            <div class="comment" style="display: block;">
+                                                <span style="padding: 5px 10px;">{{ comment.content|safe }}</span>
+                                                <span class="reply_comment">回复</span>
+                                                {% if user.is_staff %}
+                                                <span class="reply_comment_del" data-csrf="{{ csrf_token }}" data-comment-id="{{ comment.id }}">删除</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="reply_form col-lg-10" style="display: none;">
+                                                <form role="form" method="post" action="{% url 'post:post_reply' post.pk %}?#comment-{{ comment.id }}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="reply_type" value="0">
+                                                    <input type="hidden" name="comment" value="{{comment.id}}">
+                                                    <input type="hidden" name="comment_reply" value="">
+                                                    <div class="form-group">
+                                                        <textarea class="form-control" rows="2" name="text"  placeholder="回复{{comment.user.username}}："></textarea>
+                                                    </div>
+                                                    {% for field in reply_form %}
+                                                        {{ field.errors }}
+                                                    {% endfor %}
+                                                    <div class="form-group">
+                                                        <div class="btn-group pull-right">
+                                                            <button type="button" class="btn btn-default reply_form_close">关闭</button>
+                                                            <button type="submit" class="btn btn-success">发表</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div  class="reply_list" style="padding-left: 10px;">
+                                            <ul class="list-unstyled">
+                                            {% for reply in comment.postreply_set.all %}
+                                                <li class="reply_li">
+                                                    <div class="reply">
+                                                        <div class="clearfix col-lg-12" style="padding: 5px 5px;display: block;">
+                                                            <span style="color: #00a67c;">{{reply.user.username}}</span>
+                                                            <span class="fa fa-mail-forward"></span>
+
+                                                            {% if reply.comment_reply %}
+                                                            <span style="color: #00a67c;">{{reply.comment_reply.user.username}}</span>
+                                                            {% else %}
+                                                            <span style="color: #00a67c;">{{comment.user.username}}</span>
+                                                            {% endif %}
+
+                                                            <span> : {{reply.text | safe}}</span>
+                                                            <span class="reply_r">回复</span>
+                                                            {% if user.is_staff %}
+                                                            <span class="reply_r_del" data-csrf="{{ csrf_token }}" data-reply-id="{{ reply.id }}" style="color: #7ebfff;display: none;cursor: pointer;padding: 0px 5px;">删除</span>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="r_r_form col-lg-10 clearfix" style="display: none;">
+                                                            <form role="form" method="post" action="{%url 'post:post_reply' post.pk %}?#comment-{{ comment.id }}">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="reply_type" value="1">
+                                                                <input type="hidden" name="comment" value="{{comment.id}}">
+                                                                <input type="hidden" name="comment_reply" value="{{reply.id}}">
+                                                                <div class="form-group">
+                                                                    <textarea class="form-control" rows="2" name="text"  placeholder="回复{{comment.user.username}}："></textarea>
+                                                                </div>
+                                                                {% for field in reply_form %}
+                                                                    {{ field.errors }}
+                                                                {% endfor %}
+                                                                <div class="form-group clearfix">
+                                                                    <div class="btn-group pull-right">
+                                                                        <button type="button" class="btn btn-default r_r_form_close">关闭</button>
+                                                                        <button type="submit" class="btn btn-success">发表</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            {% empty %}
+                            暂无评论
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3" style="">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <h4>文章目录</h4>
+                    {{ post.toc|safe }}
+                </li>
+                <li class="list-group-item">
+                    <h4>TA的最新文章</h4>
+                    {% get_recent_post post.author as recent_post_list %}
+                    <ul>
+                        {% for post in recent_post_list %}
+                        <li>
+                          <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                        </li>
+                        {% empty %}
+                        暂无文章！
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <h4>文章标签</h4>
+                    {% if tags_list %}
+                        {% for tag in tags_list %}
+                        <button type="button" class="btn btn-default">{{tag.name}}</button>
+                        {% endfor %}
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+   </div>
+
+</div>
+
+{% endblock main %}
+
+

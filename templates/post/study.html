@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load post_tags %}
+
 {% block head %}
 {% endblock head %}
+
 {% block main %}
 <div class="container">
     {% for study in study_list %}
     <div class="row" style="margin: 10px 0px;">
         <!--发文人头像和时间信息-->
         <div class="col-lg-offset-1 col-xl-2 col-sm-12 push_info">
-            <img class="img-fluid rounded-circle float-left" src="{% static 'img/touxiang1.jpg' %}" alt="Cinque Terre" style="width: 60px; height: 60px;">
+            <img class="img-fluid rounded-circle float-left"
+                 src="{% if study.author.socialaccount_set.all.0.get_avatar_url %} {{study.author.socialaccount_set.all.0.get_avatar_url}} {% elif study.author.tx_url %} {{study.author.tx_url}} {% else %} {% static 'img/touxiang1.jpg' %} {% endif %} "
+                 alt="Cinque Terre" style="width: 60px; height: 60px;">
             <div class="float-left info_time">{{ study.created_time| timesince }} 前</div>
         </div>
         <!--文章内容主体-->
@@ -16,9 +21,23 @@
             <div class="card">
                 <div class="card-body">
                     <div style="text-align: center;"><a class="card-link" href="{{ study.get_absolute_url }}"><h4>{{ study.title }}</h4></a></div>
-                    <p>
-                        {{ study.excerpt }}
-                    </p>
+                    <div class="row">
+                        {% get_post_img_first study as post_img %}
+                        {% if post_img %}
+                        <div class="col-md-4">
+                            <img class="img-fluid" src="{{ post_img.url }}">
+                        </div>
+                        {% endif %}
+                        <div class="{% if post_img %} col-md-8 {% endif %}">
+                            <div class="article_info">
+                                <span><i class="fa fa-leaf" style="padding-right: 2px;"></i>{{ study.category.name }}</span>
+                                <span><i class="fa fa-clock-o"></i><time datetime="{{ post.created_time }}">{{ study.created_time | timesince }}前</time></span>
+                                <span><i class="fa fa-comment"></i>{{ study.postcomment_set.count }} 评论</span>
+                                <span><i class="fa fa-eye"></i>{{study.views}} 阅读</span>
+                            </div>
+                            <p>{{ study.excerpt|cut:'&nbsp;'|cut:'&ldquo;'|cut:'&rdquo;' }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

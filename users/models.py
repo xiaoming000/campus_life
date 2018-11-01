@@ -83,6 +83,9 @@ class EmailNotification(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=100)  # 标签名
 
+    def __str__(self):
+        return self.name
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)  # 标签名

@@ -7,19 +7,6 @@ a:hover {
     text-decoration: none;
 }
 
-/*flash消息样式*/
-.messages {
-    padding: 5px 0px;
-    margin: 5px 0px;
-    font-size: 20px;
-}
-.messages div{
-    text-align: center;
-}
-.messages button{
-    padding:0px 5px;
-    margin-right: 20px;
-}
 
 .form-group label {
     font-weight:normal;
@@ -35,22 +22,6 @@ a:hover {
     float: right;
     padding: 0px 20px 0px 0px;
 }
-/*文章发布*/
-.tag_add{
-    padding-left: 5px;
-    color: cornflowerblue;
-    cursor: pointer;
-}
-
-/*毕业生*/
-.g_label {
-    color: #777;
-    padding-bottom: 3px;
-}
-.g_info {
-    /*color: #7ebfff;*/
-}
-
 /*搜索高亮*/
 span.highlighted {
     color: red;
@@ -60,13 +31,48 @@ span.highlighted {
     height: 70px;
     background: #d4edda url("../img/zhumeng.png") no-repeat center;
 }
+/******************************flash消息样式***************************/
+.messages {
+    padding: 5px 0px;
+    margin: 5px 0px;
+    font-size: 20px;
+}
+.messages div{
+    text-align: center;
+}
+.messages button{
+    padding:0px 5px;
+    margin-right: 20px;
+}
+
+
+
+/******************************文章发布******************************/
+.tag_add{
+    padding-left: 5px;
+    color: cornflowerblue;
+    cursor: pointer;
+}
+.push_box #my_form{
+    margin: 20px;
+}
+
+/***********************************毕业生*****************************/
+.g_label {
+    color: #777;
+    padding-bottom: 3px;
+}
+.g_info {
+    /*color: #7ebfff;*/
+}
+
 
 #footer {
     height: 70px;
     background-color: #d4edda;
 }
 
-/*news.html post study*/
+/*******************************************news.html post study*************/
 .info_time {
     padding: 12px 3px;
 }
@@ -126,9 +132,15 @@ span.highlighted {
 .user_info_nav #post, .user_info_nav #collects{
     margin: 20px 0px;
 }
-.user_info_nav .article_info span{
+.article_info{
+    padding: 10px 0px;
+}
+.article_info span{
     padding: 0px 5px;
     color: #28a745;
+}
+.article_info span i{
+    padding: 0px 5px;
 }
 .follower{
     margin: 20px;
@@ -155,4 +167,40 @@ span.highlighted {
 }
 .form-check-input{
     zoom: 150%;
+}
+/*******************************喜欢，收藏********************************/
+.article-social{
+    margin-bottom: 30px;
+    padding-top: 40px;
+    text-align: center;
+    text-indent: 0;
+}
+.article-social .like{
+    background-color: #f17067!important;
+    position: relative;
+    padding: 8px 40px;
+    display: inline-block;
+    border: 1px solid #d6d6d6;
+    border-radius: 2px;
+    color: white;
+}
+.article-social .collect{
+    background-color: #5fcec0;
+    position: relative;
+    padding: 8px 40px;
+    display: inline-block;
+    border: 1px solid #d6d6d6;
+    border-radius: 2px;
+    color: white;
+}
+.article-social .or{
+    background: #fff;
+    color: #455670;
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: .8725em;
+    position: absolute;
+    z-index: 2;
+    margin: 2px 0 0 -19px;
+    -webkit-border-radius: 100px;
 }
