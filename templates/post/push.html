@@ -1,7 +1,48 @@
 {% extends 'base.html' %}
+{% load post_tags %}
 {% block head %}
 
 <script src="/static/js/tinymce/textarea.js"></script>
+<script>
+    $(function () {
+        $("#add_tags_btn").click(function () {
+            $(this).css("display", "none");
+            $("#add_tags_form").css("display", "block");
+        });
+
+        function close_add_tags(){
+            $("#add_tags_btn").css("display", "block");
+            $("#add_tags_form").css("display", "none");
+        }
+        $("#add_tags_cancel").click(function () {
+            close_add_tags();
+        });
+
+        $("#add_tags_submit").click(function () {
+            if ($("#add_tags_input").val() == ""){
+                alert("请输入内容后再提交！");
+            } else {
+                $.post("/post/add_tags/",
+                    {
+                        csrfmiddlewaretoken: $("#add_tags_input").attr("data-csrf"),
+                        tags: $("#add_tags_input").val(),
+                    },
+                    function (data, status) {
+                        var keys = "";
+                        var response_str = " ";
+                        for(var key in data['response']){
+                            response_str += key + ":" + data['response'][key] + ",";
+                            keys = keys + " " +  key
+                        }
+                        $('#tags').text('{% for tag in post.tags.all %} {{ tag.name }} {% endfor %}' + keys);
+                        $('#tags_input').val(data['tags']);
+                        {#alert(response_str);#}
+                        close_add_tags();
+                });
+            }
+        });
+    });
+</script>
 <style>
     .mce-window{
         transform: initial !important;
@@ -16,38 +57,46 @@
             <div style="margin-bottom: 50px;">
                 <form id="my_form" role="form" method="post" action="{% url 'post:push' %}">
                     {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ next }}"/>
-                    <input type="hidden" name="category" value="{{ category }}"/>
+                    <input type="hidden" name="category" value="{% if post %} {{ post.category.id }} {% else %} {{ category }} {% endif %}"/>
                     <input type="hidden" name="post_img" id="post_img">
+                    <input type="hidden" name="post" value="{{ post.id }}">
+                    <input type="hidden" name="tags" id="tags_input" value="">
                     <div class="form-group">
-                        <input type="text" class="form-control" id="title" name="title" placeholder="请输入文章的标题">
+                        <input type="text" class="form-control" id="title" name="title" placeholder="请输入文章的标题" value="{{ post.title }}">
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" id="excerpt" name="excerpt" placeholder="请输入文章摘要">
+                        <input type="text" class="form-control" id="excerpt" name="excerpt" placeholder="请输入文章摘要" value="{{ post.excerpt }}">
                         <span class="help-block">文章摘要选填！若未填系统会截取文章前一段文字！</span>
                     </div>
                     <div class="form-group">
                         <label for="content">正文</label>
-                        <textarea class="form-control" id="content" name="content"></textarea>
-                    </div>
-                    <div>
-                        <label class="labTitle col-form-label pull-left">文章标签：</label>
-                        <div>
-                            <div class="pull-left" id="tg_list">
-                                <input type="hidden" id="tags_input"  name="tags_str" value="">
-                                <div class="tag_add pull-left" style="">
-                                    <span>添加标签</span>
-                                </div>
-                            </div>
-                            <div>
-
-                            </div>
-                        </div>
+                        <textarea class="form-control" id="content" name="content">{{ post.content }}</textarea>
                     </div>
                     {{ form.title.errors }}
+
+                    <div class="col-md-5">
+                        <div style="padding: 10px 0px;">标签:
+                            <span id="tags">{% for tag in post.tags.all %} {{ tag.name }} {% endfor %}</span>
+                        </div>
+
+                        <div id="add_tags_box">
+                            <button type="button" class="btn-sm btn-info" id="add_tags_btn" style="margin: 5px;">添加标签</button>
+                            <div class="form-group" id="add_tags_form" style="display: none;">
+                                <label for="add_tags_input">请输入要添加的标签，以空格隔开：</label>
+                                <input type="text" class="form-control" id="add_tags_input" name="tag_name" data-csrf="{{ csrf_token}}" placeholder="请输入需要添加的标签" >
+                                <div style="padding: 10px 0px;">
+                                    <button type="button" class="btn btn-sm btn-light" id="add_tags_cancel">取消</button>
+                                    <button type="button" class="btn btn-sm btn-success" id="add_tags_submit">提交</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
                     <div class="clearfix"></div>
-                    <div>
-                        <input type="submit" value="提交">
+                    <div class="clearfix"></div>
+                    <div class="offset-5">
+                        <input type="submit" class="btn-success btn-lg" value="提交">
                     </div>
                 </form>
             </div>

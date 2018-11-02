@@ -1,5 +1,5 @@
 from django import template
-from ..models import Post
+from ..models import Post, Tag
 
 register = template.Library()
 
@@ -31,10 +31,8 @@ def get_recent_study(num=5):
 # 获取文章的第一章图片
 @register.simple_tag
 def get_post_img_first(post):
-    images = post.postimg_set.all()
-    if len(images) > 1:
-        images = images.first()
-    return images
+    image = post.postimg_set.all().first()
+    return image
 
 
 # 获取文章的全部图片

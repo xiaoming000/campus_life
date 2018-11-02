@@ -58,6 +58,11 @@ span.highlighted {
 }
 
 /***********************************毕业生*****************************/
+.g_box{
+    display: inline;
+    margin: 5px 0px;
+    overflow: hidden;
+}
 .g_label {
     color: #777;
     padding-bottom: 3px;
@@ -195,7 +200,6 @@ span.highlighted {
 }
 .article-social .or{
     background: #fff;
-    color: #455670;
     display: inline-block;
     padding: 8px 12px;
     font-size: .8725em;
@@ -203,4 +207,7 @@ span.highlighted {
     z-index: 2;
     margin: 2px 0 0 -19px;
     -webkit-border-radius: 100px;
+}
+.article-social i{
+    padding: 0px 5px;
 }

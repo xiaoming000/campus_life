@@ -2,8 +2,15 @@
 
 db.sqlite3
 
-
-__pycache__
-
 blog_django/settings.py
 
+campus/__pycache__
+graduate/__pycache__
+post/__pycache__
+query/__pycache__
+campus/__pycache__
+user/__pycache__
+
+media/upload/content/
+
+study/

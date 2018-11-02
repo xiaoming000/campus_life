@@ -5,17 +5,18 @@ import re
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponse, reverse
 from django.views import View
 from django.views.generic import DetailView, ListView
-from markdown.extensions.toc import TocExtension
+from django.db.utils import IntegrityError
 from django.utils.text import slugify
+from django.conf import settings
+from markdown.extensions.toc import TocExtension
 from .forms import PostCommentForm, PostForm, PostReplyForm
 from .models import Post, PostComment, PostReply, PostImg
-from users.models import Category, Tag
+from users.models import Category, Tag, User
 from django.views.decorators.csrf import csrf_exempt
 from PIL import Image
-from django.conf import settings
 
 
 class PostView(ListView):
@@ -105,6 +106,42 @@ class WallView(PostDetailView):
     model = Post
     template_name = 'post/wall.html'
     content_object_name = 'post'
+
+
+class LikeView(View):
+    def post(self, request):
+        user = get_object_or_404(User, pk=request.POST.get('user'))
+        post = get_object_or_404(Post, pk=request.POST.get('post'))
+        try:
+            likes = post.likes.all()
+            if user in likes:
+                response = -1
+            else:
+                post.likes.add(user)
+                post.save()
+                count = likes.count()
+                response = count + 1
+        except:
+            raise Http404
+        return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+class CollectView(View):
+    def post(self, request):
+        user = get_object_or_404(User, pk=request.POST.get('user'))
+        post = get_object_or_404(Post, pk=request.POST.get('post'))
+        try:
+            collects = post.collects.all()
+            if user in collects:
+                response = -1
+            else:
+                post.collects.add(user)
+                post.save()
+                count = collects.count()
+                response = count + 1
+        except:
+            raise Http404
+        return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 @login_required()
@@ -200,41 +237,35 @@ def del_reply(request):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-def push(request):
-    # redirect_to = request.POST.get('next', request.GET.get('next', ''))
-    category_id = request.POST.get('category', request.GET.get('category', ''))
-    if not category_id:
-        category_id = 1
-    if request.method == 'POST':
+# 文章发布
+class Push(View):
+    def post(self, request):
+        # 判断文章的类型
+        category_id = request.POST.get('category', request.GET.get('category', ''))
+        if not category_id:
+            category_id = 1
+        category = Category.objects.filter(pk=category_id)
+
+        # 对图片进行保存
         post_img = request.POST.get('post_img', '')
         post_img_list = post_img.split()
 
-        form = PostForm(request.POST)
-        category = Category.objects.filter(pk=category_id)
-        tags_str = request.POST['tags_str']
-        tags_list = tags_str.split(',')
-        tags_push = []
-        for tag in tags_list:
-            tags_data = Tag.objects.filter(name=tag)
-            if tags_data:
-                tags = tags_data[0]
-                tags_push.append(tags)
-            else:
-                try:
-                    tags = Tag()
-                    tags.name = tag
-                    tags.save()
-                    tags_push.append(tags)
-                except Exception as e:
-                    print(e)
-                    raise Http404
+        # 如果表单中post不为空，则为修改，将post.id设置为post
+        post_id = request.POST['post']
+        if post_id:
+            post_obj = Post.objects.get(pk=post_id)
+            form = PostForm(request.POST, instance=post_obj)
+        else:
+            form = PostForm(request.POST)
+        # 将tags_push的标签添加到post中
+        tags_str = request.POST['tags']
+        tags_list = tags_str.split()
+        tags = Tag.objects.filter(pk__in=tags_list)
 
         if form.is_valid():
             post = form.save(commit=False)
             post.category = category[0]
             post.author = request.user
-            post.save()
-            post.tags.set(tags_push)
 
             try:
                 # 保存post图片地址
@@ -247,16 +278,74 @@ def push(request):
             except Exception as e:
                 print(e)
                 raise Http404
+
             # 保存文章
+            post.save()
+            for tag in tags:
+                post.tags.add(tag)
 
             return redirect(post)
-    else:
+        else:
+            context = {
+                'form': form
+            }
+            return render(request, 'post/push.html', context=context)
+
+    def get(self, request):
+        category_id = request.POST.get('category', request.GET.get('category', ''))
+        try:
+            post = Post.objects.get(pk=request.GET.get('post'))
+        except Post.DoesNotExist:
+            post = ''
         form = PostForm()
         context = {
             'form': form,
-            'category': category_id
+            'category': category_id,
+            'post': post,
         }
         return render(request, 'post/push.html', context=context)
+
+
+# 文章删除
+def post_del(request):
+    post_id = str(request.POST.get('post_del', ''))
+    if post_id:
+        try:
+            post = Post.objects.get(pk=post_id)
+
+            if post.category.name == '万能墙':
+                url = 'post:wall'
+            elif post.category.name == '学习交流':
+                url = 'post:study'
+            #  对查询到的文章进行删除，编码的时候发现get获取数据无法进行删除，具体原因未知
+            Post.objects.filter(pk=post_id).delete()
+            return redirect(reverse(url))
+        except Exception as e:
+            print(e)
+            raise Http404
+    else:
+        raise Http404
+
+
+@login_required()
+def add_tags(request):
+    if request.method == 'POST' and request.user.is_staff:
+        tags = request.POST.get('tags', '')
+        tags_list = tags.split()
+        response = {}
+        tags = ""
+        for tag in tags_list:
+            try:
+                tag_obj = Tag()
+                tag_obj.name = tag
+                tag_obj.save()
+                response[tag] = "添加成功！"
+                tags = tags + ' ' + str(tag_obj.id)
+            except IntegrityError:
+                response[tag] = "添加失败！"
+        return HttpResponse(json.dumps({'response': response, 'tags': tags}), content_type="application/json")
+
+    return HttpResponse(json.dumps({'response': "请求错误！"}), content_type="application/json")
 
 
 # 上传图片 POST
