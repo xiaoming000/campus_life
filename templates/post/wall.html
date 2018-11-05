@@ -51,6 +51,15 @@
                     }
                 );
             });
+            
+            var img_sm_box_height = $('.img_sm_box').eq(0).height();
+            var img_lg_box_height = $('.img_lg_box').eq(0).height();
+            for (var i=0; i <= $('.img_sm').length; i++){
+                $('.img_sm').eq(i).css('padding-top', (img_sm_box_height - $('.img_sm').eq(i).height())/2);
+                if ($('.img_lg').eq(i).height() != 0) {
+                    $('.img_lg').eq(i).css('padding-top', (img_lg_box_height - $('.img_lg').eq(i).height())/2);
+                }
+            }
         });
 
     </script>
@@ -83,13 +92,13 @@
             <div class="detail_post_content">{{post.content | safe}}</div>
             <div class="row d-flex flex-row">
             {% for images in post.postimg_set.all %}
-                <div class="col-md-2 col-sm-3 border" style="display: inline;height: 100px;overflow: hidden;margin: 5px;">
-                    <a href="#img_lg"><img class="img_sm" data-forloop="{{ forloop.counter }}" src="{{ images.url }}" style="padding: 5px;"></a>
+                <div class="col-md-2 col-sm-3 border img_sm_box" style="height: 100px;overflow: hidden;margin: 5px;display:table-cell;text-align:center;">
+                    <a href="#img_lg"><img class="img_sm" data-forloop="{{ forloop.counter }}" src="{{ images.url }}"></a>
                 </div>
               {% endfor %}
             </div>
 
-            <div id="img_lg">
+            <div>
                 <div id="demo" class="carousel slide" data-ride="carousel" style="margin: 20px 0px;">
                     <!-- 轮播（Carousel）指标 -->
                     <ol class="carousel-indicators">
@@ -98,10 +107,10 @@
                         {% endfor %}
                     </ol>
                     <!-- 轮播（Carousel）项目 -->
-                    <div class="carousel-inner" style="background-color: #0b2e13;height: 600px;text-align: center;">
+                    <div class="carousel-inner">
                         {% for images in post.postimg_set.all %}
-                        <div class="carousel-item carousel-{{ forloop.counter }} {% if forloop.counter == 1 %} active {% endif %}" style="top: 20%;">
-                            <img src="{{ images.url }}" alt="First slide">
+                        <div class="carousel-item carousel-{{ forloop.counter }} {% if forloop.counter == 1 %} active {% endif %} img_lg_box" style="background-color: #0b2e13;height: 600px;text-align: center;">
+                            <img src="{{ images.url }}" class="img_lg img-fluid" alt="First slide">
                             <div class="carousel-caption">{{ forloop.counter }}</div>
                         </div>
                         {% endfor %}

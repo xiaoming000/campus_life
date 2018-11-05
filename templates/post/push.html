@@ -36,7 +36,6 @@
                         }
                         $('#tags').text('{% for tag in post.tags.all %} {{ tag.name }} {% endfor %}' + keys);
                         $('#tags_input').val(data['tags']);
-                        {#alert(response_str);#}
                         close_add_tags();
                 });
             }
