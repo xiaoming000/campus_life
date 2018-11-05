@@ -109,7 +109,7 @@
                     <!-- 轮播（Carousel）项目 -->
                     <div class="carousel-inner">
                         {% for images in post.postimg_set.all %}
-                        <div class="carousel-item carousel-{{ forloop.counter }} {% if forloop.counter == 1 %} active {% endif %} img_lg_box" style="background-color: #0b2e13;height: 600px;text-align: center;">
+                        <div class="carousel-item carousel-{{ forloop.counter }} {% if forloop.counter == 1 %} active {% endif %} img_lg_box" style="background-color: white;height: 600px;text-align: center;">
                             <img src="{{ images.url }}" class="img_lg img-fluid" alt="First slide">
                             <div class="carousel-caption">{{ forloop.counter }}</div>
                         </div>
