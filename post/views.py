@@ -266,6 +266,8 @@ class Push(View):
             post = form.save(commit=False)
             post.category = category[0]
             post.author = request.user
+            # 保存文章
+            post.save()
 
             try:
                 # 保存post图片地址
@@ -279,8 +281,6 @@ class Push(View):
                 print(e)
                 raise Http404
 
-            # 保存文章
-            post.save()
             for tag in tags:
                 post.tags.add(tag)
 
