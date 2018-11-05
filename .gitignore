@@ -2,7 +2,7 @@
 
 db.sqlite3
 
-blog_django/settings.py
+campus/settings.py
 
 campus/__pycache__
 graduate/__pycache__
