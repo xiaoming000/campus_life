@@ -17,16 +17,11 @@ from users.email import CreateMessage
 
 class NewsView(View):
     def get(self, request):
-        redirect_to = request.POST.get('next', request.GET.get('next', ''))
         news = News.objects.all()
         now_time = datetime.now()
         return render(request, 'news/news.html', {
             'news': news,
-            'next': redirect_to,
-            'fail': 0,
             'htitle': '校园新闻',
-            'nav': 2,
-            'now_time': now_time
         })
 
 
@@ -84,10 +79,9 @@ def news_comment(request, news_pk):
                 'markdown.extensions.extra',
                 'markdown.extensions.codehilite',
             ])
-            content =md.convert(content)
+            content = md.convert(content)
             category = MsgCategory.objects.get(name='comment')
             news_url = request.build_absolute_uri(news.get_absolute_url())
-            # return HttpResponse(news_url)
             msg = CreateMessage(from_user=request.user, to_user=news.auther, category=category, content=content, news_url=news_url)
             msg.create_email()
 

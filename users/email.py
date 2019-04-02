@@ -1,6 +1,6 @@
-from .models import Message, MailBox, EmailNotification, MsgPost
-from django.core.mail import send_mail, EmailMultiAlternatives
-from django.template import Context, loader
+from .models import Message, MailBox, EmailNotification
+from django.core.mail import EmailMultiAlternatives
+from django.template import loader
 
 
 class CreateMessage(object):
