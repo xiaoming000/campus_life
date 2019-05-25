@@ -5,7 +5,6 @@ db.sqlite3
 campus/settings.py
 
 campus/__pycache__
-graduate/__pycache__
 post/__pycache__
 query/__pycache__
 campus/__pycache__

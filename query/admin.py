@@ -1,3 +1,14 @@
 from django.contrib import admin
+from .models import Course, QueryUsers
 
-# Register your models here.
+
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ['user', 'xnd', 'xqd']
+
+
+class QueryUsersAdmin(admin.ModelAdmin):
+    list_display = ['user']
+
+
+admin.site.register(Course, CourseAdmin)
+admin.site.register(QueryUsers, QueryUsersAdmin)

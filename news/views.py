@@ -1,10 +1,9 @@
 import json
-from datetime import datetime
+import redis
 import markdown
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils.html import strip_tags
 from django.views import View
 from django.views.generic import DetailView
 from markdown.extensions.toc import TocExtension
@@ -13,12 +12,12 @@ from .forms import NewsCommentForm, NewsReplyForm
 from .models import News, NewsComment, Reply
 from users.models import MsgCategory, MailBox, Message, EmailNotification
 from users.email import CreateMessage
+from .spider import NewsSpider
 
 
 class NewsView(View):
     def get(self, request):
         news = News.objects.all()
-        now_time = datetime.now()
         return render(request, 'news/news.html', {
             'news': news,
             'htitle': '校园新闻',
@@ -151,5 +150,26 @@ def del_reply(request):
                 response = "删除成功！"
         except:
             response = "删除失败！"
-
         return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def news_spider(request):
+    spider = NewsSpider()
+    # 百度新闻
+    baidu_url = "http://top.baidu.com/index.html"
+    rd = redis.Redis(host='127.0.0.1', port=6379)
+    response = spider.get_baidu_news(baidu_url)
+    if len(response) > 0:
+        rd.delete('campus_baidu_news')
+        for res in response:
+            data = json.dumps(res)
+            rd.rpush('campus_baidu_news', data)
+    # 知乎热搜
+    # zhihu_url = "https://www.zhihu.com/hot"
+    # response = spider.get_zhihu_news(zhihu_url)
+    # if len(response) > 0:
+    #     rd.delete('campus_zhihu_news')
+    #     for res in response:
+    #         data = json.dumps(res)
+    #         rd.rpush('campus_zhihu_news', data)
+    return HttpResponse("执行成功", content_type="application/json")

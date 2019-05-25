@@ -7,6 +7,8 @@ from django.views import View, generic
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
+from bs4 import BeautifulSoup
+import requests
 
 
 def index(request):
@@ -215,3 +217,19 @@ def message_read_edit(request):
             msg.is_read = 1
             msg.save()
         return redirect(reverse('users:message'))
+
+
+def get_baidu_news():
+    html = requests.get(url, headers=header)
+    # 确定网页的编码方式后进行编码，编码格式为gbk
+    req = html.text.encode(html.encoding).decode("gbk")
+    soup = BeautifulSoup(req, 'lxml')   # 使用里写满了解析器解析网页代码为soup对象
+    li = soup.select('#hot-list > li')
+    hot = []
+    for i in li:
+        top = i.select('span')[0].text
+        title = i.select('.list-title')[0]['title']
+        link = i.select('.list-title')[0]['href']
+        hot.append([top, title, link])
+    print(hot)
+

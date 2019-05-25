@@ -116,7 +116,8 @@ span.highlighted {
     color: #444444;
 }
 .user_info{
-    margin: 20px 0px;
+    margin: 10px 0px;
+    padding-top: 10px;
 }
 .user_info .info_username{
     font-size: 36px;

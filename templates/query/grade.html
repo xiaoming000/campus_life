@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block head %}
+    <script>
+        $(function () {
+            $('table').addClass('table table-bordered')
+        });
+    </script>
+{% endblock %}
+{% block main %}
+
+<div class="course container" style="margin-top: 10px;height: 690px;">
+
+    {% if name %}
+    <div style="padding:10px 20px;">
+        <div style="padding:10px 0px;">
+            <span>{{ name }}</span> |
+            <span>{{ number }}</span> |
+            <span>{{ faculty }}</span> |
+            <span>{{ major }}</span> |
+            <span>{{ a_class }}</span> |
+            <span>学年：{{ xnd }}</span> |
+            <span>学期：{{ xqd }}</span>
+        </div>
+        <div>
+            <table>
+            {% for grade in grades %}
+                <tr>
+                {% for text in grade %}
+                    <td>{{ text }}</td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock main %}

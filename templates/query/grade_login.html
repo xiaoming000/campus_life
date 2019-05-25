@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block main %}
+<div class="course container">
+    <div class="row" style="margin-top: 10px;padding-top: 40px;height: 690px;">
+        <div class="col-md-6 offset-md-3">
+            <h3 style="text-align: center;">成绩查询</h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="query_type" value="{{ query_type }}">
+              <div class="form-group">
+                <label for="number">学号:</label>
+                <input type="text" class="form-control" name="number" id="number">
+              </div>
+              <div class="form-group">
+                <label for="pwd">密码:</label>
+                <input type="password" class="form-control" id="pwd" name="password">
+              </div>
+              <div class="form-group">
+    {#              <div style="clear: both;"></div>#}
+                <input type="text" class="form-control" id="check-code" name="check_code" style="max-width: 280px;float: left;">
+                  <div style="float: left;padding-left: 20px;padding-top: 5px;">
+                    <label for="pwd" style="padding-right: 10px;">验证码:</label>
+                    <img src="\static\code\{{ id }}.jpg" >
+                  </div>
+                <div style="clear: both;"></div>
+              </div>
+                <span>学年：</span>
+              <select name="year" class="custom-select-sm">
+                <option value="2018-2019">2018-2019</option>
+                <option value="2018-2019">2017-2018</option>
+                <option value="2018-2019">2016-2017</option>
+                <option value="2018-2019">2015-2016</option>
+              </select>
+                <span style="padding-left: 20px;">学期：</span>
+              <select name="term" class="custom-select-sm" style="width: 80px;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+              <div class="form-check" style="padding-left: 20px;">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox" name="remember"> Remember me
+                </label>
+              </div>
+
+                <div style="padding-left: 200px;">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{{ test }}
+
+{% endblock main %}

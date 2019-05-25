@@ -39,15 +39,17 @@
 {% endblock head %}
 
 {% block main %}
-<div class="container post_list">
+<div class="container post_list" style="padding-top: 5px;">
     {% for post in post_list %}
-    <div class="row"  style="margin: 10px 0px">
+    <div class="row"  style="padding: 5px 0px">
         <!--发文人头像和时间信息-->
-        <div class="col-lg-offset-1 col-xl-2 col-sm-12 push_info">
-            <img class="img-fluid rounded-circle float-left"
-                 src="{% if post.author.socialaccount_set.all.0.get_avatar_url %} {{post.author.socialaccount_set.all.0.get_avatar_url}} {% elif post.author.tx_url %} {{post.author.tx_url}} {% else %} {% static 'img/touxiang1.jpg' %} {% endif %} "
-                 alt="Cinque Terre" style="width: 60px; height: 60px;">
-            <div class="float-left info_time">{{ post.created_time| timesince }} 前</div>
+        <div class="col-lg-offset-1 col-xl-2 col-sm-12 push_info" style="background-color: white;">
+            <div style="padding-top: 50px;">
+                <img class="img-fluid rounded-circle float-left"
+                     src="{% if post.author.socialaccount_set.all.0.get_avatar_url %} {{post.author.socialaccount_set.all.0.get_avatar_url}} {% elif post.author.tx_url %} {{post.author.tx_url}} {% else %} {% static 'img/touxiang1.jpg' %} {% endif %} "
+                     alt="Cinque Terre" style="width: 60px; height: 60px;">
+                <div class="float-left info_time">{{ post.created_time| timesince }} 前</div>
+            </div>
         </div>
         <!--文章内容主体-->
         <div class="col-lg-10">

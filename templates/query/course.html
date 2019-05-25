@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block head %}
+    <script>
+        $(function () {
+            $('table').addClass('table table-bordered')
+        });
+    </script>
+{% endblock %}
+{% block main %}
+
+<div class="course container">
+
+{#    <div class="choose" style="padding:10px 20px;">#}
+{#        <form class="form-inline" role="form" method="post">#}
+{#            {% csrf_token %}#}
+{#            <div class="form-inline" style="padding-right: 20px;">#}
+{#              <label for="sel1" style="padding-right: 10px;">学年:</label>#}
+{#              <select class="form-control" id="sel1" name="xnd">#}
+{#                <option>2018-2019</option>#}
+{#                <option>2017-2018</option>#}
+{#                <option>2016-2017</option>#}
+{#                <option>2015-2016</option>#}
+{#              </select>#}
+{#            </div>#}
+{#            <div class="form-inline" style="padding-right: 20px;">#}
+{#              <label for="sel1" style="padding-right: 10px;">学期:</label>#}
+{#              <select class="form-control" id="sel1" name="xqd">#}
+{#                <option>1</option>#}
+{#                <option>2</option>#}
+{#                <option>3</option>#}
+{#              </select>#}
+{#            </div>#}
+{#            <button type="submit" class="btn">查询</button>#}
+{#        </form>#}
+{#    </div>#}
+    {% if name %}
+    <div style="padding:10px 20px;">
+        <div style="padding:10px 0px;">
+            <span>{{ name }}</span> |
+            <span>{{ number }}</span> |
+            <span>{{ faculty }}</span> |
+            <span>{{ major }}</span> |
+            <span>{{ a_class }}</span> |
+            <span>学年：{{ xnd }}</span> |
+            <span>学期：{{ xqd }}</span>
+            <span style="padding-left: 30px;"><a href="{% url 'query:course_login' %}" style="color: #888;">重新导入</a></span>
+        </div>
+        <div>
+            {% autoescape off %}
+            {{ course_table }}
+            {% endautoescape %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock main %}

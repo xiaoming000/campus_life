@@ -70,3 +70,12 @@ class Reply(models.Model):
 
     def __str__(self):
         return self.text[0:20]
+
+
+# class SpiderNews(models.Model):
+#     top = models.SmallIntegerField()
+#     title = models.CharField(max_length=100)
+#     link = models.CharField(max_length=300)
+#     heat = models.IntegerField()
+#     type = models.SmallIntegerField()
+#     create_time = models.DateTimeField(auto_now_add=True)

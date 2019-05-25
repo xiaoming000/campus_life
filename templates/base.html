@@ -8,38 +8,43 @@
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
 
 
-    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+{#    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>#}
+{#    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>#}
+{#    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>#}
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
 
     <script src="{% static 'js/index.js' %}"></script>
     <script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
     <script src="{% static 'js/jquery.form.js' %}"></script>
-    <!--<script src="{% static 'js/tinymce/jquery.tinymce.min.js' %}"></script>-->
+
+
 
     <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
     {% block head %}{% endblock head %}
 </head>
 <body>
 <!--herder-->
-<div id="head">
-    {% if user.is_authenticated %}
-    <div class="float-left">
-        <img class="rounded-circle" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" style="width: 70px;height: 70px;">
-    </div>
-    <div class="float-right">
-        <a href="{% url 'account_logout' %}?next={{ request.path }}" style="font-size: 20px;padding-right: 10px;">
-            <i class="fa fa-sign-out"><span style="padding-left: 5px;">退出</span></i>
-        </a>
-    </div>
-    {% else %}
-    <div class="float-right">
-        <a href="{% url 'account_login' %}?next={{ request.path }}" style="font-size: 20px;padding-right: 10px;">
-            <i class="fa fa-user"><span style="padding-left: 5px;">登入</span></i>
-        </a>
-    </div>
-    {% endif %}
-</div>
+{#<div id="head">#}
+{#    {% if user.is_authenticated %}#}
+{#    <div class="float-left">#}
+{#        <img class="rounded-circle" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" style="width: 70px;height: 70px;">#}
+{#    </div>#}
+{#    <div class="float-right">#}
+{#        <a href="{% url 'account_logout' %}?next={{ request.path }}" style="font-size: 20px;padding-right: 10px;">#}
+{#            <i class="fa fa-sign-out"><span style="padding-left: 5px;">退出</span></i>#}
+{#        </a>#}
+{#    </div>#}
+{#    {% else %}#}
+{#    <div class="float-right">#}
+{#        <a href="{% url 'account_login' %}?next={{ request.path }}" style="font-size: 20px;padding-right: 10px;">#}
+{#            <i class="fa fa-user"><span style="padding-left: 5px;">登入</span></i>#}
+{#        </a>#}
+{#    </div>#}
+{#    {% endif %}#}
+{#</div>#}
 <!--导航栏-->
 <div class="clearfix">
     <nav class="navbar navbar-expand-xl bg-dark navbar-dark" role="navigation">
@@ -59,14 +64,14 @@
                     <li class="nav-item other {% if '/post/study/' in request.path or '/post/detail/' in request.path %} active {% endif %}">
                         <a class="nav-link" href="{% url 'post:study' %}">学习交流</a>
                     </li>
-                    <li class="nav-item essay {% if request.path == '/graduate/' %} active {% endif %}">
-                        <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a>
-                    </li>
+{#                    <li class="nav-item essay {% if request.path == '/graduate/' %} active {% endif %}">#}
+{#                        <a class="nav-link" href="{% url 'graduate:graduate_list' %}">毕业校友</a>#}
+{#                    </li>#}
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">信息查询<strong class="caret"></strong></a>
                         <div class="dropdown-menu" style="min-width: 104px;">
-                            <a class="dropdown-item" href="#">成绩查询</a>
-                            <a class="dropdown-item" href="#">成绩查询</a>
+                            <a class="dropdown-item" href="{% url 'query:courses' %}">课表查询</a>
+                            <a class="dropdown-item" href="{% url 'query:grade_login' %}">成绩查询</a>
                         </div>
                 </li>
                 </ul>
@@ -100,6 +105,24 @@
                     {% endif %}
                 </div>
             </div>
+            <div>
+                {% if user.is_authenticated %}
+{#                <div class="float-left">#}
+{#                    <img class="rounded-circle" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" style="width: 70px;height: 70px;">#}
+{#                </div>#}
+                <div class="float-right">
+                    <a href="{% url 'account_logout' %}?next={{ request.path }}" style="font-size: 20px;padding-right: 10px;color:white;">
+                        <i class="fa fa-sign-out"><span style="padding-left: 5px;">退出</span></i>
+                    </a>
+                </div>
+                {% else %}
+                <div class="float-right">
+                    <a href="{% url 'account_login' %}?next={{ request.path }}" style="font-size: 20px;padding-right: 10px;color:white;">
+                        <i class="fa fa-user"><span style="padding-left: 5px;">登入</span></i>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
             <button class="navbar-toggler navbar-right" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -118,8 +141,11 @@
 </div>
 {% endif %}
 
+<div style="background-color: #eee">
 {% block main %}
 {% endblock main %}
+</div>
+
 
 </body>
 </html>
