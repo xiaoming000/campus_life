@@ -16,7 +16,7 @@ idna==2.7
 jieba==0.39
 Markdown==2.6.11
 oauthlib==2.1.0
-Pillow==5.2.0
+Pillow==8.3.2
 protobuf==3.6.0
 pycparser==2.18
 Pygments==2.2.0
